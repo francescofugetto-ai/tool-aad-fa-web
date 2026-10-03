@@ -1,0 +1,794 @@
+﻿<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tool AAD FA">
+<meta name="theme-color" content="#FAF9F7">
+<script data-iphone="sentinella">
+(function(){
+var h=document.documentElement, msg="";
+function ha(c){ return (" "+h.className+" ").indexOf(" "+c+" ")>=0; }
+// L'errore puo' arrivare prima che l'avviso esista — uno script in <head> che
+// non si lascia leggere —: il messaggio si tiene da parte e si scrive quando
+// la pagina c'e'.
+function scrivi(){
+  var e=document.getElementById("nmerr");
+  if(e&&msg) e.textContent="Errore del motore: "+msg;
+}
+function ko(m){
+  if(m&&!msg) msg=m;
+  if(!ha("motore-ko")) h.className+=" motore-ko";
+  scrivi();
+}
+h.className+=" js";
+window.onerror=function(m,src,riga,col){
+  m=String(m);
+  if(/^Script error\.?$/.test(m)) m="il browser non ne mostra il dettaglio (\u00abScript error.\u00bb)";
+  ko(m+(riga?" (riga "+riga+(col?", colonna "+col:"")+")":""));
+};
+document.addEventListener("DOMContentLoaded",function(){
+  if(!ha("motore-ok")) ko(msg||"il motore non ha completato l'avvio"); else scrivi();
+});
+})();
+</script>
+<title>FA — antiaritmici per mantenere il ritmo</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --bg:#FAF9F7; --surface:#FFFFFF; --surface-alt:#F3F2EF;
+    --border:rgba(11,11,11,0.10); --border-strong:rgba(11,11,11,0.18);
+    --text-primary:#0B0B0B; --text-secondary:#52514E; --text-muted:#76746F;
+    --accent-blue:#2A78D6;   --accent-blue-bg:#E6F1FB;   --accent-blue-border:#B5D4F4;
+    --accent-amber:#BA7517;  --accent-amber-bg:#FAEEDA;  --accent-amber-border:#FAC775;
+    --accent-red:#A32D2D;    --accent-red-bg:#FCEBEB;    --accent-red-border:#F7C1C1;
+    --accent-green:#3B6D11;  --accent-green-bg:#EAF3DE;  --accent-green-border:#C0DD97;
+    --cor-1:#3B8E5A; --cor-2a:#E0A82E; --cor-2b:#DE7E3C; --cor-3:#B33A3A;
+    --k0:#2E7D4F; --k0-bg:#E2F3E8; --k0-bd:#A6D9B8;
+    --k1:#2A78D6; --k1-bg:#E3EFFB; --k1-bd:#A9CBF1;
+    --k2:#8A6A00; --k2-bg:#FBF3C8; --k2-bd:#EBD56C;
+    --k3:#B45309; --k3-bg:#FDEBD8; --k3-bd:#F4BD85;
+    --k4:#A32D2D; --k4-bg:#FCE3E3; --k4-bd:#F0A9A9;
+    --grid:rgba(42,120,214,.08);
+    --font:'IBM Plex Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+    --display:'IBM Plex Sans Condensed','Arial Narrow',-apple-system,'Segoe UI',sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,Consolas,'Courier New',monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg:#111418; --surface:#181C22; --surface-alt:#20252D;
+      --border:rgba(255,255,255,.10); --border-strong:rgba(255,255,255,.19);
+      --text-primary:#E7EAEE; --text-secondary:#B8BEC7; --text-muted:#949BA5;
+      --accent-blue:#72AAEE;   --accent-blue-bg:#18283A;   --accent-blue-border:#2E4B6C;
+      --accent-amber:#E3A94F;  --accent-amber-bg:#30250F;  --accent-amber-border:#5D4719;
+      --accent-red:#EF8E8E;    --accent-red-bg:#361B1B;    --accent-red-border:#6B3232;
+      --accent-green:#95C873;  --accent-green-bg:#1C2A13;  --accent-green-border:#3C5626;
+      --k0:#8FD3A8; --k0-bg:#132B1D; --k0-bd:#2D5A3E;
+      --k1:#8EC0F5; --k1-bg:#16283C; --k1-bd:#2F5378;
+      --k2:#EDD36A; --k2-bg:#2C260C; --k2-bd:#5E5120;
+      --k3:#F3B27A; --k3-bg:#33210F; --k3-bd:#6B4524;
+      --k4:#F29A9A; --k4-bg:#361B1B; --k4-bd:#6B3232;
+      --grid:rgba(114,170,238,.07);
+      color-scheme:dark;
+    }
+  }
+  body { font-family:var(--font); background:var(--bg); color:var(--text-primary); font-size:14.5px; line-height:1.65; -webkit-font-smoothing:antialiased; }
+  .page { max-width:960px; margin:0 auto; padding:0 16px 4rem; }
+  strong, b { font-weight:600; }
+  .muted { color:var(--text-muted); }
+  .hero { margin:0 -16px 0; padding:2.2rem 16px 1.3rem; border-bottom:1px solid var(--border);
+          background-color:var(--bg);
+          background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+          background-size:22px 22px; }
+  .kicker { font-family:var(--mono); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-blue); margin-bottom:8px; }
+  .headline { font-family:var(--display); font-size:30px; font-weight:700; line-height:1.12; margin-bottom:10px; }
+  .lede { font-size:14.5px; color:var(--text-secondary); max-width:760px; margin-bottom:12px; }
+  .lede strong { color:var(--text-primary); }
+  .meta-row { display:flex; flex-wrap:wrap; gap:6px 8px; font-size:12px; }
+  .meta-chip { background:var(--surface); border:1px solid var(--border-strong); border-radius:99px; padding:2px 10px; color:var(--text-secondary); overflow-wrap:anywhere; }
+  .meta-chip strong { color:var(--text-primary); }
+  .bar { position:-webkit-sticky;position:sticky; top:0; z-index:30; background:var(--bg); border-bottom:1px solid var(--border-strong);
+         margin:0 -16px 1.2rem; padding:8px 16px; display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; }
+  .bar .lbl { font-family:var(--mono); font-size:10.5px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--text-muted); }
+  .bar .sp { flex:1 1 auto; }
+  .btn { font:600 12.5px var(--font); padding:6px 13px; border-radius:99px; border:1px solid var(--border-strong); background:var(--surface); color:var(--text-secondary); cursor:pointer; }
+  .btn:hover { border-color:var(--accent-blue); color:var(--accent-blue); }
+  .stage { display:flex; align-items:baseline; gap:10px; margin:2rem 0 .7rem; padding-bottom:6px; border-bottom:2px solid var(--border-strong); }
+  .stage-n { font-family:var(--mono); font-size:12px; font-weight:600; color:#FFFFFF; background:var(--accent-blue); border-radius:6px; padding:1px 7px; }
+  .stage-t { font-family:var(--display); font-size:20px; font-weight:700; line-height:1.2; }
+  .stage-w { margin-left:auto; font-size:11.5px; color:var(--text-muted); text-align:right; }
+  .card { background:var(--surface); border:1px solid var(--border-strong); border-radius:12px; padding:14px 16px; margin-bottom:12px; }
+  .card h3 { font-size:13px; font-weight:600; letter-spacing:.02em; margin-bottom:8px; color:var(--text-secondary); }
+  .row { display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px; margin-bottom:10px; }
+  .row:last-child { margin-bottom:0; }
+  .fl { font-size:12.5px; font-weight:600; color:var(--text-secondary); min-width:150px; }
+  .fl small { display:block; font-weight:400; color:var(--text-muted); font-size:11.5px; }
+  input[type=number] { font:500 15px var(--font); color:var(--text-primary); background:var(--surface); border:1px solid var(--border-strong); border-radius:8px; padding:6px 9px; width:92px; text-align:center; }
+  .seg { display:inline-flex; flex-wrap:wrap; border:1px solid var(--border-strong); border-radius:10px; overflow:hidden; }
+  .seg label { position:relative; cursor:pointer; }
+  .seg input { position:absolute; opacity:0; width:1px; height:1px; }
+  .seg span { display:block; padding:6px 12px; font-size:13.5px; font-weight:500; color:var(--text-secondary); border-right:1px solid var(--border); }
+  .seg label:last-child span { border-right:none; }
+  .seg input:checked + span { background:var(--text-primary); color:var(--bg); }
+  .seg input:focus-visible + span { outline:2px solid var(--accent-blue); outline-offset:-2px; }
+  .chk { display:flex; align-items:flex-start; gap:9px; padding:6px 0; font-size:14px; line-height:1.45; border-bottom:1px dashed var(--border); cursor:pointer; }
+  .chk:last-child { border-bottom:none; }
+  .chk input { margin-top:3px; width:17px; height:17px; flex:0 0 auto; accent-color:var(--accent-blue); }
+  .chk small { display:block; color:var(--text-muted); font-size:12px; }
+  .chk .tx { flex:1 1 auto; min-width:0; }
+  .riga { display:flex; flex-wrap:wrap; align-items:center; gap:6px 12px; padding:6px 0; border-bottom:1px dashed var(--border); }
+  .riga .fl { min-width:0; flex:1 1 180px; }
+  .hide { display:none !important; }
+  .esito { display:flex; flex-wrap:wrap; align-items:center; gap:10px 14px; margin-bottom:4px; }
+  .cat { display:inline-block; font-size:12.5px; font-weight:600; border-radius:99px; padding:2px 10px; border:1px solid; }
+  .k0 { color:var(--k0); background:var(--k0-bg); border-color:var(--k0-bd); }
+  .k1 { color:var(--k1); background:var(--k1-bg); border-color:var(--k1-bd); }
+  .k2 { color:var(--k2); background:var(--k2-bg); border-color:var(--k2-bd); }
+  .k3 { color:var(--k3); background:var(--k3-bg); border-color:var(--k3-bd); }
+  .k4 { color:var(--k4); background:var(--k4-bg); border-color:var(--k4-bd); }
+  .kx { color:var(--text-muted); background:var(--surface-alt); border-color:var(--border-strong); }
+  .big { font-family:var(--display); font-size:26px; font-weight:700; line-height:1.15; }
+  .cor { display:inline-block; font-family:var(--mono); font-size:11px; font-weight:600; color:#FFFFFF; border-radius:4px; padding:0 5px; margin:0 1px; white-space:nowrap; vertical-align:1px; }
+  .c1 { background:var(--cor-1); } .c2a { background:var(--cor-2a); color:#1D1602; } .c2b { background:var(--cor-2b); } .c3 { background:var(--cor-3); }
+  .pg { font-family:var(--mono); font-size:11px; color:var(--text-muted); }
+  .dv { font-family:var(--mono); font-size:10px; font-weight:600; letter-spacing:.03em; color:var(--accent-red); background:var(--accent-red-bg); border:1px solid var(--accent-red-border); border-radius:4px; padding:0 5px; white-space:nowrap; }
+  .nota { border-left:3px solid var(--accent-amber); background:var(--accent-amber-bg); border-radius:0 8px 8px 0; padding:7px 11px; margin-top:8px; font-size:13.5px; }
+  .nota.info { border-left-color:var(--accent-blue); background:var(--accent-blue-bg); }
+  .nota.stop { border-left-color:var(--accent-red); background:var(--accent-red-bg); }
+  .nota.ok { border-left-color:var(--accent-green); background:var(--accent-green-bg); }
+  .nota.spenta { border-left-color:var(--border-strong); background:var(--surface-alt); color:var(--text-secondary); }
+  .nota strong { color:var(--text-primary); }
+  .passo { display:flex; gap:10px; padding:8px 0; border-bottom:1px dashed var(--border); }
+  .passo:last-child { border-bottom:none; }
+  .passo .ico { flex:0 0 26px; font-weight:700; text-align:center; font-family:var(--mono); font-size:13px; padding-top:1px; }
+  .passo .tx { flex:1 1 auto; font-size:14px; min-width:0; overflow-wrap:anywhere; }
+  .passo.att { background:var(--accent-blue-bg); border-radius:8px; border-bottom-color:transparent; padding:8px 8px; margin:2px -8px; }
+  .passo.att .ico { color:var(--accent-blue); }
+  .lista li { margin:4px 0 4px 18px; font-size:13.5px; }
+  .foot { margin-top:2.4rem; padding-top:1rem; border-top:1px solid var(--border-strong); font-size:12px; color:var(--text-muted); line-height:1.7; }
+  .foot strong { color:var(--text-secondary); }
+  .farm { border-left:4px solid var(--border-strong); }
+  .farm.s-ok { border-left-color:var(--k0); }
+  .farm.s-ris { border-left-color:var(--accent-amber); }
+  .farm.s-no { border-left-color:var(--k4); }
+  .farm .nome { font-family:var(--display); font-size:21px; font-weight:700; line-height:1.15; }
+  .sint { display:flex; flex-wrap:wrap; align-items:center; gap:6px 10px; padding:6px 0; border-bottom:1px dashed var(--border); font-size:14px; }
+  .sint:last-child { border-bottom:none; }
+  .sint .n { font-weight:600; min-width:110px; }
+  .sint .d { color:var(--text-secondary); font-size:13px; }
+  @media (max-width:640px) {
+    .headline { font-size:25px; }
+    .stage-w { display:none; }
+    .fl { min-width:0; width:100%; }
+    .big { font-size:22px; }
+    .farm .nome { font-size:19px; }
+    .page { overflow-wrap:anywhere; }
+  }
+  .chk.on .tx { color:var(--text-primary); font-weight:500; }
+  @media print { .bar { position:static; } }
+</style>
+<style data-iphone="stile">
+/* L'avviso e' visibile per costruzione: lo nasconde solo la classe che la
+   sentinella mette quando JavaScript esiste, e lo rimostra quando il motore
+   muore. Nell'anteprima dell'iPhone nessuna delle due arriva. */
+#nomotore{background:#FCEBEB;border:1.5px solid #A32D2D;border-radius:10px;
+ padding:12px 15px;margin:0 0 1.1rem;font-size:13.5px;line-height:1.6;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+#nomotore strong{display:block;color:#A32D2D;font-size:15px;margin-bottom:4px}
+#nomotore p{margin:6px 0 0}
+#nomotore a{color:#A32D2D}
+#nomotore .nmurl{font-family:'SFMono-Regular',Consolas,Menlo,monospace;font-size:.92em;word-break:break-all}
+#nomotore .nmerr{display:block;font-family:'SFMono-Regular',Consolas,Menlo,monospace;
+ font-size:11.5px;color:#A32D2D;margin-top:6px;word-break:break-word}
+#nomotore .nmerr:empty{display:none}
+html.js #nomotore{display:none}
+html.js.motore-ko #nomotore{display:block}
+
+#nmprivacy{background:#E2F4F5;border:1px solid #A7DBDE;border-radius:8px;padding:9px 13px;
+ margin:0 0 1rem;font-size:12.5px;line-height:1.55;color:#0B0B0B;
+ font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif}
+@media print{#nmprivacy{display:none}}
+</style>
+</head>
+<body>
+<div class="nomotore" id="nomotore" role="alert">
+ <strong>Motore di calcolo non attivo</strong>
+ <p>I calcoli, i filtri e i comandi di questa pagina <b>non funzionano</b>: dove leggi «—» non c'è un
+ valore. Il testo resta leggibile, i numeri che dipendono dai tuoi dati no. Non usare questa pagina
+ per decidere una dose.</p>
+ <p>Su iPhone e iPad succede sempre con un file salvato sul telefono: si apre nell'<b>anteprima</b> —
+ dall'app File, da Mail, da WhatsApp —, che mostra la pagina ma non esegue il motore, e Apple non
+ permette di aprirlo in Safari. Sull'iPhone il tool funziona aperto da questo indirizzo, in Safari: <a class="nmurl" href="https://francescofugetto-ai.github.io/tool-aad-fa-web/">https://francescofugetto-ai.github.io/tool-aad-fa-web/</a> — poi Condividi, «Aggiungi alla schermata Home». Dopo la prima apertura funziona anche senza rete. Su computer e Android basta aprire il file.</p>
+ <span class="nmerr" id="nmerr"></span>
+</div>
+<div class="nmprivacy" id="nmprivacy">
+ <b>Quello che scrivi resta su questo dispositivo.</b> La pagina non invia niente in rete e non
+ salva niente: nessun dato esce da qui. Per la stessa ragione, <b>chiudendola il contenuto si
+ perde</b> — copia il referto dove ti serve prima di chiudere.
+</div>
+<div class="page">
+<header class="hero">
+  <div class="kicker">Strumento · Fibrillazione atriale · ESC 2024</div>
+  <h1 class="headline">FA — antiaritmici per mantenere il ritmo, con il rene</h1>
+  <p class="lede"><strong>Come si usa.</strong> Il passo 1 dice il tipo di FA: nella permanente il ritmo non si cerca più. Il passo 2 porta la frazione di eiezione e la cardiopatia, che nella fonte decidono il farmaco; il passo 3 conduzione, QTc, potassio e le altre condizioni che escludono una molecola, <strong>da confermare come valutate</strong>. Il passo 4 porta età, sesso, peso, creatinina ed eGFR: la <strong>clearance di Cockcroft-Gault sul peso reale</strong> la calcola lo strumento, e decide; con BMI ≥30 accanto c'è quella sul peso aggiustato. Ne escono i cinque antiaritmici della fonte — <strong>ammessi, con riserva, esclusi o non proposti</strong>, sempre con la ragione —, la dose a lungo termine, il rene, i controlli e, quando nessun farmaco va bene o il paziente la preferisce, l'ablazione. <strong>Azzera</strong>, in alto, ricomincia.</p>
+  <div class="meta-row">
+    <span class="meta-chip"><strong>Fonte</strong> 2024 ESC Guidelines for the management of atrial fibrillation, e il suo Supplementary data</span>
+    <span class="meta-chip"><strong>Calcolo</strong> Rec. Table 18, p. 3358 · Fig. 5–6, pp. 3335–3336 · Tab. 13, p. 3357 · Rec. Table 19, p. 3359</span>
+    <span class="meta-chip"><strong>Rene e controlli</strong> schede tecniche di Cordarone, Multaq, Almarytm, Frequil, Rytmonorm, Sotalex (lette il 03/10/2026)</span>
+  </div>
+</header>
+
+<div class="bar" id="bar" aria-live="polite">
+  <span class="lbl">FA</span> <span id="barTipo" class="cat kx">—</span>
+  <span class="lbl">Ammessi</span> <span id="barAmm" class="cat kx">—</span>
+  <span class="lbl">Rene</span> <span id="barRene" class="cat kx">—</span>
+  <span class="sp"></span>
+  <button class="btn" id="azzera" type="button">Azzera</button>
+</div>
+
+<div class="stage"><span class="stage-n">1</span><span class="stage-t">Il tipo di FA</span><span class="stage-w">Tab. 5, p. 3327</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Tipo</span>
+    <span class="seg">
+      <label><input type="radio" name="tipo" value="par"><span>parossistica</span></label>
+      <label><input type="radio" name="tipo" value="pers"><span>persistente</span></label>
+      <label><input type="radio" name="tipo" value="perm"><span>permanente</span></label>
+    </span></div>
+  <div class="muted" style="font-size:12.5px;margin-top:6px">Persistente comprende quella di lunga durata (≥12 mesi), finché il ritmo resta un'opzione; permanente è la decisione condivisa di non tentarlo più (Tab. 5, p. 3327). Una FA di prima diagnosi va prima classificata.</div>
+</div>
+
+<div class="stage"><span class="stage-n">2</span><span class="stage-t">Il cuore</span><span class="stage-w">Rec. Table 18, p. 3358 · Fig. 5–6</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Frazione di eiezione</span>
+    <span class="seg">
+      <label><input type="radio" name="fe" value="r"><span>≤40% · HFrEF</span></label>
+      <label><input type="radio" name="fe" value="lr"><span>41–49% · HFmrEF</span></label>
+      <label><input type="radio" name="fe" value="p"><span>≥50%</span></label>
+    </span></div>
+  <label class="chk"><input type="checkbox" id="hf"><span class="tx">Scompenso cardiaco in corso o pregresso<small>con FE ≥50% è l'HFpEF della Rec. Table 18; la scheda tecnica del dronedarone guarda anche al pregresso</small></span></label>
+  <label class="chk"><input type="checkbox" id="cad"><span class="tx">Coronaropatia</span></label>
+  <label class="chk"><input type="checkbox" id="lvh"><span class="tx">Ipertrofia ventricolare sinistra severa</span></label>
+  <label class="chk"><input type="checkbox" id="valv"><span class="tx">Valvulopatia significativa</span></label>
+</div>
+
+<div class="stage"><span class="stage-n">3</span><span class="stage-t">Conduzione, QT, potassio e altre condizioni</span><span class="stage-w">Rec. Table 18 · Tab. 13 · schede tecniche</span></div>
+<div class="card">
+  <label class="chk"><input type="checkbox" id="cond"><span class="tx">Disturbi di conduzione avanzati<small>la fonte non li elenca; le schede tecniche nominano BAV di II–III grado, blocchi di branca o bifascicolari, malattia del nodo del seno</small></span></label>
+  <div class="riga hide" id="rigaPace"><span class="fl">Pacing antibradicardico</span>
+    <span class="seg">
+      <label><input type="radio" name="pace" value="si"><span>presente</span></label>
+      <label><input type="radio" name="pace" value="no"><span>assente</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">QTc<small>ms; la soglia di Multaq è con la formula di Bazett</small></span><input type="number" id="qtc" min="300" max="700" step="1" inputmode="numeric" placeholder="ms"></div>
+  <div class="riga"><span class="fl">Potassio<small>sui limiti del laboratorio</small></span>
+    <span class="seg">
+      <label><input type="radio" name="k" value="norm"><span>nella norma</span></label>
+      <label><input type="radio" name="k" value="basso"><span>basso</span></label>
+      <label><input type="radio" name="k" value="alto"><span>alto</span></label>
+    </span></div>
+  <label class="chk"><input type="checkbox" id="brugada"><span class="tx">Sindrome di Brugada</span></label>
+  <label class="chk"><input type="checkbox" id="lqts"><span class="tx">Sindrome del QT lungo congenito</span></label>
+  <label class="chk"><input type="checkbox" id="ipert"><span class="tx">Ipertiroidismo</span></label>
+  <label class="chk" style="margin-top:6px;border-top:1px solid var(--border-strong);padding-top:9px"><input type="checkbox" id="valutati"><span class="tx"><b>Ho valutato tutte le condizioni dei passi 2 e 3</b><small>quelle non segnate sono assenti: senza questa conferma lo strumento non ammette né esclude nessun farmaco</small></span></label>
+</div>
+
+<div class="stage"><span class="stage-n">4</span><span class="stage-t">Il paziente e il rene</span><span class="stage-w">Tab. 13, p. 3357 · schede tecniche</span></div>
+<div class="card">
+  <div class="riga"><span class="fl">Età</span><input type="number" id="eta" min="18" max="110" step="1" inputmode="numeric" placeholder="anni"></div>
+  <div class="riga"><span class="fl">Sesso</span>
+    <span class="seg">
+      <label><input type="radio" name="sesso" value="m"><span>uomo</span></label>
+      <label><input type="radio" name="sesso" value="f"><span>donna</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">Peso</span><input type="number" id="peso" min="25" max="250" step="0.5" inputmode="decimal" placeholder="kg"></div>
+  <div class="riga"><span class="fl">Altezza<small>serve al BMI: dai 30 si mostra anche la clearance sul peso aggiustato</small></span><input type="number" id="alt" min="120" max="220" step="1" inputmode="numeric" placeholder="cm"></div>
+  <div class="riga"><span class="fl">Creatinina</span><input type="number" id="creat" min="0.2" max="1800" step="0.01" inputmode="decimal" placeholder="—">
+    <span class="seg">
+      <label><input type="radio" name="ucr" value="mg" id="ucr_mg" checked><span>mg/dL</span></label>
+      <label><input type="radio" name="ucr" value="umol"><span>µmol/L</span></label>
+    </span></div>
+  <div class="riga"><span class="fl">eGFR<small>mL/min/1,73 m², dal laboratorio</small></span><input type="number" id="egfr" min="1" max="200" step="1" inputmode="numeric" placeholder="—"></div>
+  <label class="chk"><input type="checkbox" id="dialisi"><span class="tx">In dialisi</span></label>
+  <div id="outRene" style="margin-top:8px"></div>
+</div>
+
+<div class="stage"><span class="stage-n">5</span><span class="stage-t">Gli antiaritmici</span><span class="stage-w">Rec. Table 18, p. 3358 · Tab. 13, p. 3357</span></div>
+<div class="card" id="outSint"></div>
+<div class="card farm" id="d_amio"></div>
+<div class="card farm" id="d_dron"></div>
+<div class="card farm" id="d_flec"></div>
+<div class="card farm" id="d_prop"></div>
+<div class="card farm" id="d_sota"></div>
+
+<div class="stage"><span class="stage-n">6</span><span class="stage-t">L'ablazione</span><span class="stage-w">Rec. Table 19, p. 3359 · Rec. Table 21, p. 3361</span></div>
+<div class="card">
+  <label class="chk"><input type="checkbox" id="prefAbl"><span class="tx">Il paziente preferisce l'ablazione</span></label>
+  <div id="outAbl" style="margin-top:6px"></div>
+</div>
+
+<div class="card"><h3>Incoerenze della fonte e contrasti con le schede tecniche</h3><div id="outInc"></div></div>
+<div class="card"><h3>Limiti per questo paziente</h3><ul class="lista" id="limiti"></ul></div>
+
+<div class="foot">
+  <strong>Fonte.</strong> Van Gelder IC, Rienstra M, Bunting KV, et al. 2024 ESC Guidelines for the management of atrial fibrillation developed in collaboration with EACTS. <em>Eur Heart J</em> 2024;45:3314–3414, doi:10.1093/eurheartj/ehae176, nella versione corretta (<em>Eur Heart J</em> 2025;46:4349), e il suo Supplementary data — definizioni del tipo di FA (Tab. 5, p. 3327), percorsi della parossistica e della persistente (Fig. 5, p. 3335; Fig. 6, p. 3336), dronedarone e frequenza (p. 3352), amiodarone nella Tab. 12 (p. 3353), dosi e controindicazioni degli antiaritmici (Tab. 13, p. 3357), antiaritmici a lungo termine (Rec. Table 18, p. 3358, e il testo delle pp. 3357–3358), ablazione transcatetere (Rec. Table 19, p. 3359), endoscopica e ibrida (Rec. Table 21, p. 3361), sindromi aritmiche ereditarie (p. 3370; Suppl., Tab. S6, p. 12), amiodarone e tiroide (Suppl., § 4.1, p. 11). <strong>Schede tecniche</strong>, lette il 03/10/2026: Cordarone (AIFA, testo reso disponibile l'08/09/2022), Multaq (EMA, EPAR aggiornato il 31/07/2026), Almarytm (AIFA, 12/11/2025), Frequil (AIFA, 15/06/2025), Rytmonorm (AIFA, 16/07/2022), Sotalex (AIFA, 03/02/2024; posologia renale uguale nel generico Mylan). Ogni numero mostrato porta la sua fonte.<br><br>
+  Strumento personale di studio e consultazione: <strong>non sostituisce il giudizio clinico né la scheda tecnica del farmaco</strong>. Non salva i dati e non li invia in rete.
+</div>
+</div>
+<script>
+(function () {
+  "use strict";
+
+  /* ═══ DATI ═══════════════════════════════════════════════════════════════
+     2024 ESC Guidelines for the management of atrial fibrillation.
+     Rec. Table 18, p. 3358 — amiodarone nell'HFrEF I A, con la tossicita'
+       extracardiaca da sorvegliare; dronedarone I A, anche con HFmrEF, HFpEF,
+       cardiopatia ischemica o valvulopatia; flecainide o propafenone I A,
+       esclusi funzione sistolica ridotta, IVS severa, coronaropatia; con loro
+       betabloccante, diltiazem o verapamil IIa C; sotalolo IIb A con FE
+       normale o coronaropatia, con QT, potassio, rene e fattori proaritmici
+       sotto stretta sorveglianza; nessun antiaritmico con disturbi di
+       conduzione avanzati senza pacing antibradicardico III C.
+     Fig. 5 (p. 3335) e Fig. 6 (p. 3336) — HFrEF: amiodarone (I); HFmrEF
+       stabile, coronaropatia, valvulopatia: amiodarone o dronedarone (I),
+       sotalolo (IIb); cardiopatia assente o minima: dronedarone, flecainide o
+       propafenone (I), sotalolo (IIb). Classi senza livello.
+     Tab. 13, p. 3357 — a lungo termine: flecainide 50-150 mg x2; propafenone
+       150-300 mg x3; amiodarone 200 mg/die dopo 200 mg x3 per 4 settimane;
+       nota: dronedarone 400 mg x2, sotalolo 80-160 mg x2. Cella comune a
+       flecainide e propafenone: non con cardiopatia strutturale o coronarica
+       severa, Brugada, insufficienza renale grave (CrCl <35 mL/min/1,73 m2).
+       Amiodarone nell'ipertiroidismo solo se non c'e' altra scelta.
+     p. 3352 — il dronedarone non si inizia per la frequenza: nella FA
+       permanente aumenta scompenso, ictus e morte cardiovascolare.
+     Rec. Table 19, p. 3359 — ablazione: decisione condivisa I C; dopo
+       antiaritmico inefficace o non tollerato I A; prima linea parossistica
+       I A, persistente selezionati IIb C; HFrEF con tachicardiomiopatia
+       probabile I B, selezionati IIa B; bradicardia o pause IIa C.
+     Rec. Table 21, p. 3361 — endoscopica o ibrida nella persistente
+       refrattaria IIa A.
+     Schede tecniche (03/10/2026): Multaq ClCr <30 e QTc >=500 controindicati
+       (4.2, 4.3); Sotalex ClCr >60 dose usuale, 30-60 1/2, 10-30 1/4, <10 no
+       (4.2), QTc di base >450 non studiato (4.4); Cordarone nessun
+       aggiustamento renale (5.2). */
+  var SOGLIE = { bmiAgg:30, ic:35, dron:30, sotaPiena:60, sotaMeta:30, sotaNo:10, qtcDron:500, qtcSota:450, qtcCv:500, umol:88.4, peso70:70, etaPolm:70, etaDron:75 };
+  var DOSI = { amioCarico:"200 mg ×3/die per 4 settimane", amio:"200 mg/die", dron:"400 mg ×2/die", flec:"50–150 mg ×2/die", prop:"150–300 mg ×3/die", sota:[80, 160] };
+
+  var R18 = "ESC 2024, Rec. Table 18, p. 3358", F56 = "ESC 2024, Fig. 5–6, pp. 3335–3336", T13 = "ESC 2024, Tab. 13, p. 3357",
+      T12 = "ESC 2024, Tab. 12, p. 3353", P52 = "ESC 2024, p. 3352", P57 = "ESC 2024, p. 3357", P58 = "ESC 2024, p. 3358",
+      R19 = "ESC 2024, Rec. Table 19, p. 3359", R21 = "ESC 2024, Rec. Table 21, p. 3361", R14 = "ESC 2024, Rec. Table 14, p. 3351",
+      R17 = "ESC 2024, Rec. Table 17, p. 3356", T5 = "ESC 2024, Tab. 5, p. 3327", T11 = "ESC 2024, Tab. 11, p. 3345",
+      S11 = "ESC 2024 · Suppl., § 4.1, p. 11", S6 = "ESC 2024 · Suppl., Tab. S6, p. 12", P70 = "ESC 2024, p. 3370", R20 = "ESC 2024, Rec. Table 20, p. 3360";
+
+  /* ═══ FUNZIONI DI SCRITTURA (pure) ════════════════════════════════════ */
+  function r1(x) { return Math.round(x * 10) / 10; }
+  function nf(x, d) { if (d === 0) x = Math.round(x); else x = r1(x); return String(x).replace(".", ","); }
+  function pgs(p) { return ' <span class="pg">' + p + "</span>"; }
+  function corPill(c, l) { var k = { "I":"c1", "IIa":"c2a", "IIb":"c2b", "III":"c3" }[c]; return '<span class="cor ' + k + '">' + c + "</span>" + (l ? ' <span class="cor ' + k + '" style="opacity:.85">' + l + "</span>" : ""); }
+  function st(nome, sez) { return ' <span class="pg">scheda tecnica (' + nome + ", " + sez + ")</span>"; }
+  function dv() { return ' <span class="dv">DA VERIFICARE</span>'; }
+
+  /* ═══ FUNZIONI DI CALCOLO (pure) ══════════════════════════════════════ */
+  function creatMg(s) {
+    if (s.creat === null) return { v:null };
+    if (s.ucr === "umol") {
+      if (s.creat < 18 || s.creat > 1800) return { v:null, fuori:true };
+      return { v:s.creat / SOGLIE.umol, umol:s.creat };
+    }
+    if (s.creat < 0.2 || s.creat > 20) return { v:null, fuori:true };
+    return { v:s.creat, umol:s.creat * SOGLIE.umol };
+  }
+
+  // Cockcroft-Gault sul peso REALE, che decide (decisione del medico del
+  // 03/10/2026). Con BMI >=30 accanto il valore sul peso aggiustato: ideale di
+  // Devine + 0,4 x l'eccesso, come negli altri tool del progetto.
+  function clearance(s) {
+    var o = { clcr:null, agg:null, bmi:null, ibw:null, pesoAgg:null, mg:null, umol:null, manca:[], fuori:false };
+    if (s.peso !== null && s.alt !== null) o.bmi = s.peso / Math.pow(s.alt / 100, 2);
+    var c = creatMg(s);
+    o.mg = c.v; o.umol = c.umol || null;
+    if (s.eta === null) o.manca.push("età");
+    if (!s.sesso) o.manca.push("sesso");
+    if (s.peso === null) o.manca.push("peso");
+    if (s.creat === null) o.manca.push("creatinina");
+    else if (c.fuori) { o.fuori = true; o.manca.push("creatinina fuori scala per l'unità scelta"); }
+    if (o.manca.length) return o;
+    var f = s.sesso === "f" ? 0.85 : 1;
+    o.clcr = ((140 - s.eta) * s.peso * f) / (72 * c.v);
+    if (o.bmi !== null && o.bmi >= SOGLIE.bmiAgg) {
+      o.ibw = (s.sesso === "f" ? 45.5 : 50) + 0.9 * (s.alt - 152.4);
+      if (o.ibw > 0 && s.peso > o.ibw) { o.pesoAgg = o.ibw + 0.4 * (s.peso - o.ibw); o.agg = ((140 - s.eta) * o.pesoAgg * f) / (72 * c.v); }
+    }
+    return o;
+  }
+  function rene(s) {
+    var c = clearance(s);
+    return { cl:c, crcl:c.clcr, agg:c.agg, egfr:s.egfr, dialisi:s.dialisi, noto:s.dialisi || c.clcr !== null };
+  }
+
+  // Sotalex 4.2: >60 dose usuale; 30-60 meta'; 10-30 un quarto; <10 non
+  // somministrare. A 30 esatti le due fasce si toccano: un quarto, la piu' bassa.
+  function sotaFrazione(crcl, dialisi) {
+    if (dialisi) return 0;
+    if (crcl === null) return null;
+    if (crcl > SOGLIE.sotaPiena) return 1;
+    if (crcl > SOGLIE.sotaMeta) return 0.5;
+    if (crcl >= SOGLIE.sotaNo) return 0.25;
+    return 0;
+  }
+  // Tab. 13: «CrCl <35 mL/min/1,73 m2», una clearance con l'unita' dell'eGFR.
+  // Lettura prudente: fuori se e' sotto 35 l'una o l'altra stima.
+  function icRene(rn) {
+    if (rn.dialisi) return { esito:"no", dialisi:true };
+    var cl = rn.crcl !== null && rn.crcl < SOGLIE.ic, eg = rn.egfr !== null && rn.egfr < SOGLIE.ic;
+    if (cl || eg) return { esito:"no", cl:cl, eg:eg };
+    if (rn.crcl === null) return { esito:"manca" };
+    return { esito:"ok", senzaEgfr:rn.egfr === null };
+  }
+  function dronRene(rn) {
+    if (rn.dialisi) return { esito:"no", dialisi:true };
+    if (rn.crcl === null) return { esito:"manca" };
+    return { esito:rn.crcl < SOGLIE.dron ? "no" : "ok" };
+  }
+  // Soglie che il peso reale e il peso aggiustato mettono ai lati opposti.
+  function incroci(rn) {
+    var o = [];
+    if (rn.crcl === null || rn.agg === null || rn.dialisi) return o;
+    if ((rn.crcl < SOGLIE.ic) !== (rn.agg < SOGLIE.ic)) o.push({ f:"flecainide e propafenone", s:"35" });
+    if ((rn.crcl < SOGLIE.dron) !== (rn.agg < SOGLIE.dron)) o.push({ f:"dronedarone", s:"30" });
+    var a = sotaFrazione(rn.crcl, false), b = sotaFrazione(rn.agg, false);
+    if (a !== b) o.push({ f:"sotalolo", s:(Math.max(a, b) === 1 ? "60" : (Math.min(a, b) === 0 ? "10" : "30")) });
+    return o;
+  }
+
+  // L'avviso dentro il farmaco: il valore sul peso aggiustato sta dall'altra
+  // parte della soglia che decide per lui.
+  function avvisoAgg(rn, chi) {
+    var x = incroci(rn), i;
+    for (i = 0; i < x.length; i++) if (x[i].f.indexOf(chi) >= 0) return "<b>Peso aggiustato</b>: clearance " + nf(rn.agg) + " mL/min, dall'altra parte della soglia di " + x[i].s + ". Decide il peso reale (decisione del medico, 03/10/2026); la scelta resta clinica.";
+    return "";
+  }
+
+  function gruppo(s) {
+    if (!s.fe) return null;
+    if (s.fe === "r") return "hfref";
+    if (s.fe === "lr" || s.hf || s.cad || s.lvh || s.valv) return "media";
+    return "nessuna";
+  }
+  // Il gruppo intermedio delle Fig. 5-6: HFmrEF stabile, coronaropatia, valvulopatia.
+  function figMedia(s) { return s.fe === "lr" || s.cad || s.valv; }
+
+  function nuovo(base, cor) { return { base:base, cor:cor || null, no:[], manca:[], ris:[], note:[], dose:"", rene:"", ctrl:[] }; }
+  function chiudi(o) { o.stato = o.no.length ? "no" : (o.manca.length ? "manca" : (o.base === "np" ? "np" : (o.ris.length ? "ris" : "ok"))); return o; }
+
+  function amio(s, rn, g) {
+    var o;
+    if (g === "hfref") o = nuovo("ok", { c:"I", l:"A", src:R18 });
+    else if (g === "media" && figMedia(s)) { o = nuovo("ok", { c:"I", l:"", src:F56 }); o.ris.push("Classe I nelle Fig. 5–6 per HFmrEF stabile, coronaropatia o valvulopatia, accanto al dronedarone" + pgs(F56) + "; la Rec. Table 18 gli dà la riga I A soltanto nell'HFrEF" + pgs(R18) + ". Lettura prudente: la tabella — qui prima il dronedarone, l'amiodarone quando il dronedarone non si può usare."); }
+    else if (g === "media") { o = nuovo("np"); o.note.push("Con HFpEF o ipertrofia severa, senza HFmrEF, coronaropatia o valvulopatia, né la Rec. Table 18 né le Fig. 5–6 lo propongono" + pgs(R18 + "; " + F56) + "."); }
+    else { o = nuovo("np"); o.note.push("Senza cardiopatia, o con una cardiopatia minima, né la Rec. Table 18 né le Fig. 5–6 lo propongono: la scelta la decide la sicurezza, e i suoi effetti avversi extracardiaci sono i più ampi" + pgs(P58) + "."); }
+    if (s.ipert) o.no.push("<b>Ipertiroidismo</b>: controindicato" + pgs(S11) + " e per la scheda tecnica, che esclude i distiroidismi in corso o pregressi" + st("Cordarone", "4.3") + "; la Tab. 13 lo ammette «solo se non c'è altra scelta», per il rischio di tireotossicosi" + pgs(T13) + ". Lettura prudente: escluso.");
+    if (s.lqts) o.no.push("<b>QT lungo congenito</b>: fra i farmaci controindicati" + pgs(S6 + "; " + P70) + ".");
+    if (s.k === "basso") o.note.push("Potassio basso: l'ipopotassiemia va prevenuta e corretta, con il QT sotto controllo" + st("Cordarone", "4.5") + ".");
+    if (s.qtc !== null && s.qtc > SOGLIE.qtcCv) o.ris.push("QTc " + s.qtc + " ms: per il mantenimento né la fonte né la scheda tecnica danno una soglia; l'amiodarone allunga il QT" + pgs(T13) + ", e con QTc &gt;500 ms la fonte non vuole nemmeno la cardioversione farmacologica, salvo aver pesato proaritmia e bradicardia " + corPill("III", "C") + pgs(R17) + ".");
+    o.dose = "Carico per os <b>" + DOSI.amioCarico + "</b>, poi <b>" + DOSI.amio + "</b>" + pgs(T13) + " («o meno», " + T12.replace("ESC 2024, ", "") + ").";
+    o.rene = "nessun aggiustamento: l'escrezione renale è trascurabile" + st("Cordarone", "5.2") + "; la fonte non lo dice.";
+    o.ctrl.push("<b>Tossicità extracardiaca</b> da pesare e sorvegliare" + pgs(R18) + ": effetti avversi seri polmonari, oculari, epatici e tiroidei" + pgs(T12) + ".");
+    o.ctrl.push("<b>Tiroide</b>: TSH, ed eventualmente ecografia, prima di iniziare; poi almeno ogni 3 mesi" + pgs(S11) + ". Disfunzione tiroidea in circa il 20% dei trattati" + pgs(S11) + ".");
+    o.ctrl.push("<b>ECG e potassio</b> prima di iniziare; durante, <b>transaminasi</b> ed ECG; TSH ultrasensibile prima, durante e per mesi dopo la sospensione; transaminasi oltre 3 volte il limite: ridurre o sospendere" + st("Cordarone", "4.4") + ".");
+    o.ctrl.push("<b>Polmone</b>: sintomi e obiettività periodicamente, radiografia del torace al sospetto; <b>occhio</b>: visita con il fondo se cala la vista" + st("Cordarone", "4.4") + (s.eta !== null && s.eta > SOGLIE.etaPolm ? ". Oltre i 70 anni la tossicità polmonare può essere più grave" : "") + ".");
+    o.ctrl.push("<b>Interazioni</b>, molte" + pgs(T13) + ": warfarin (INR più frequente), digossina (livelli), dabigatran (cautela); betabloccanti, verapamil e diltiazem sconsigliati" + st("Cordarone", "4.5") + ".");
+    return chiudi(o);
+  }
+
+  function dron(s, rn, g) {
+    var o = nuovo("ok", { c:"I", l:"A", src:R18 }), r;
+    if (g === "hfref") o.no.push("<b>HFrEF</b>: né la Rec. Table 18 né le Fig. 5–6 lo propongono" + pgs(R18 + "; " + F56) + "; la scheda tecnica lo controindica con disfunzione sistolica" + st("Multaq", "4.3") + ".");
+    else if (s.fe === "lr" || s.hf) o.ris.push("<b>Contrasto con la scheda tecnica</b>: la fonte lo raccomanda anche con HFmrEF e HFpEF " + corPill("I", "A") + pgs(R18) + "; Multaq lo controindica con insufficienza cardiaca pregressa o in corso o con disfunzione sistolica, senza soglia di FE" + st("Multaq", "4.1, 4.3") + ". Lettura prudente: la scheda tecnica — lo strumento non lo dà come scelta senza riserve.");
+    r = dronRene(rn);
+    if (r.esito === "no") o.no.push(r.dialisi ? "<b>Dialisi</b>: controindicato con ClCr &lt;30 mL/min" + st("Multaq", "4.2, 4.3") + "." : "<b>ClCr " + nf(rn.crcl) + " mL/min</b> (&lt;30): controindicato" + st("Multaq", "4.2, 4.3") + ".");
+    else if (r.esito === "manca") o.manca.push("serve la clearance: sotto 30 mL/min è controindicato" + st("Multaq", "4.3"));
+    if (s.qtc !== null && s.qtc >= SOGLIE.qtcDron) o.no.push("<b>QTc " + s.qtc + " ms</b> (≥500, Bazett): controindicato" + st("Multaq", "4.3") + ".");
+    else if (s.qtc === null) o.manca.push("serve il QTc: da 500 ms (Bazett) è controindicato" + st("Multaq", "4.3"));
+    if (s.lqts) o.ris.push("<b>QT lungo congenito</b>: il supplementare controindica i farmaci che allungano il QT e nomina amiodarone e sotalolo" + pgs(S6) + "; il dronedarone allunga il QTc di circa 10 ms" + st("Multaq", "4.4") + ".");
+    if (s.k === "basso" || s.k === "alto") o.note.push("Potassio fuori norma: le carenze di potassio e magnesio vanno corrette prima di iniziare e durante" + st("Multaq", "4.4") + ".");
+    o.dose = "<b>" + DOSI.dron + "</b>" + pgs(T13 + ", nota") + ", a colazione e a cena" + st("Multaq", "4.2") + ".";
+    if (avvisoAgg(rn, "dronedarone")) o.note.push(avvisoAgg(rn, "dronedarone"));
+    if (r.esito === "ok") o.rene = "ClCr " + nf(rn.crcl) + " mL/min (≥30): nessun aggiustamento; la creatinina sale di circa 10 µmol/L nella prima settimana senza danno renale" + st("Multaq", "4.2, 4.4") + "; la fonte non lo dice.";
+    else if (r.esito === "manca") o.rene = "— serve la clearance: sotto 30 mL/min controindicato, sopra nessun aggiustamento" + st("Multaq", "4.2, 4.3") + ".";
+    o.ctrl.push("<b>ECG</b> almeno ogni 6 mesi; <b>creatinina</b> prima e dopo 7 giorni; <b>funzione epatica</b> prima, a 1 settimana e a 1 mese, poi ogni mese per 6 mesi, al 9° e al 12° mese e poi periodicamente; segni di scompenso" + st("Multaq", "4.4") + (s.eta !== null && s.eta >= SOGLIE.etaDron ? "; dai 75 anni con comorbidità, scompenso ed ECG periodici" + st("Multaq", "4.2, 4.4") : "") + ".");
+    o.ctrl.push("<b>Interazioni</b>: dabigatran controindicato, rivaroxaban non raccomandato, apixaban senza aggiustamento" + st("Multaq", "4.3, 4.5") + "; edoxaban 30 mg con il dronedarone" + pgs(T11) + "; digossina ridotta di circa il 50%; INR stretto con l'AVK" + st("Multaq", "4.5") + ".");
+    o.ctrl.push("Solo per il ritmo: <b>mai per la frequenza</b>, perché nella FA permanente aumenta scompenso, ictus e morte cardiovascolare" + pgs(P52) + "; se la FA diventa permanente si sospende" + st("Multaq", "4.4") + ". In Italia classe A, RRL, con piano terapeutico (Banca dati AIFA, 03/10/2026).");
+    return chiudi(o);
+  }
+
+  function ic(chi, s, rn, g) {
+    var o = nuovo("ok", { c:"I", l:"A", src:R18 }), flec = chi === "flec", r;
+    var cc = flec ? st("Almarytm", "4.3") : st("Rytmonorm", "4.3");
+    if (s.fe === "r" || s.fe === "lr") o.no.push("<b>Funzione sistolica ridotta</b> (FE " + (s.fe === "r" ? "≤40%" : "41–49%") + "): esclusi dalla riga I A" + pgs(R18) + "; nelle Fig. 5–6 stanno solo nella cardiopatia assente o minima" + pgs(F56) + ".");
+    if (s.cad) o.no.push("<b>Coronaropatia</b>: esclusi" + pgs(R18) + ".");
+    if (s.lvh) o.no.push("<b>Ipertrofia ventricolare sinistra severa</b>: esclusi" + pgs(R18) + ".");
+    if (s.fe === "p" && s.hf && !s.cad && !s.lvh) o.no.push("<b>Scompenso con FE conservata</b>: la riga I A non lo nomina fra le esclusioni" + pgs(R18) + ", ma le Fig. 5–6 mettono gli IC solo nella cardiopatia assente o minima" + pgs(F56) + ", la Tab. 13 li esclude nella cardiopatia strutturale severa" + pgs(T13) + ", e la scheda tecnica lo controindica " + (flec ? "nello scompenso" : "nell'insufficienza cardiaca manifesta") + cc + ". Lettura prudente: escluso.");
+    if (s.valv && s.fe === "p" && !s.cad && !s.lvh) o.no.push("<b>Valvulopatia</b>: la riga I A non la nomina fra le esclusioni" + pgs(R18) + ", ma nelle Fig. 5–6 sta nel gruppo di amiodarone e dronedarone, non in quello degli IC" + pgs(F56) + "; la scheda tecnica " + (flec ? "controindica la valvulopatia emodinamicamente significativa" : "controindica la cardiopatia strutturale significativa") + cc + ". Lettura prudente: escluso.");
+    if (s.brugada) o.no.push("<b>Sindrome di Brugada</b>: non si usa" + pgs(T13 + "; " + P70) + cc + ".");
+    r = icRene(rn);
+    if (r.esito === "no") o.no.push(r.dialisi ? "<b>Dialisi</b>: insufficienza renale grave, non si usa" + pgs(T13) + "." : "<b>" + (r.cl ? "ClCr " + nf(rn.crcl) + " mL/min" : "") + (r.cl && r.eg ? " ed " : "") + (r.eg ? "eGFR " + nf(rn.egfr, 0) : "") + "</b> (&lt;35): insufficienza renale grave, non si usa" + pgs(T13) + (flec ? "" : " — la cella delle controindicazioni è una sola per flecainide e propafenone") + ".");
+    else if (r.esito === "manca") o.manca.push("serve la clearance: sotto 35 non si usa" + pgs(T13));
+    if (!flec && (s.k === "basso" || s.k === "alto")) o.no.push("<b>Potassio fuori norma</b>: i disturbi manifesti del bilancio elettrolitico, potassio compreso, lo controindicano finché non sono corretti" + st("Rytmonorm", "4.3") + ".");
+    if (flec && (s.k === "basso" || s.k === "alto")) o.note.push("Potassio fuori norma: ipo- e iperpotassiemia vanno corrette prima di iniziare" + st("Almarytm", "4.4") + ".");
+    if (s.cond && s.pace === "si") o.note.push("Con il pacing: cautela nella malattia del nodo del seno e nella disfunzione del nodo AV" + pgs(T13) + "; " + (flec ? "soglia di stimolazione prima, dopo una settimana e periodicamente" + st("Almarytm", "4.4") : "il pacemaker va verificato e se serve riprogrammato" + st("Rytmonorm", "4.4")) + ".");
+    if (avvisoAgg(rn, "flecainide")) o.note.push(avvisoAgg(rn, "flecainide"));
+    o.av = true;
+    if (flec) {
+      o.dose = "<b>" + DOSI.flec + "</b>" + pgs(T13) + "; massimo 300 mg/die nelle aritmie sopraventricolari" + st("Almarytm", "4.2") + ".";
+      if (r.esito === "ok") o.rene = "ClCr " + nf(rn.crcl) + " mL/min" + (rn.egfr !== null ? " ed eGFR " + nf(rn.egfr, 0) : "") + ", non sotto 35: sopra quella soglia la fonte non dà aggiustamenti" + pgs(T13) + ". La scheda tecnica parte da 100 mg/die con ClCr ≤35 mL/min/1,73 m², e nell'insufficienza renale «meno grave», senza soglia, da 100 mg ogni 12 h, con i livelli plasmatici" + st("Almarytm", "4.2") + (r.senzaEgfr ? ". eGFR non indicato: la soglia di 35 è scritta con l'unità dell'eGFR" : "") + ".";
+      else if (r.esito === "manca") o.rene = "— serve la clearance: sotto 35 non si usa" + pgs(T13) + ".";
+      o.ctrl.push("<b>ECG</b> all'inizio e a ogni cambio di dose; PR ≥0,30 s o QRS ≥0,18 s: cautela e possibile riduzione; <b>livelli plasmatici</b> con insufficienza renale o epatica; elettroliti corretti prima" + st("Almarytm", "4.2, 4.4") + ". Il rilascio prolungato vuole un ECG ogni 3 mesi sul lungo periodo" + st("Frequil", "4.2") + ".");
+      o.ctrl.push("<b>Interazioni</b>: con l'amiodarone la dose si dimezza; inibitori del CYP2D6 ne aumentano i livelli; verapamil e diltiazem con cautela" + st("Almarytm", "4.5") + ".");
+    } else {
+      o.dose = "<b>" + DOSI.prop + "</b>" + pgs(T13) + "; la scheda tecnica dà 450–600 mg/die, fino a 900 mg occasionalmente" + st("Rytmonorm", "4.2") + (s.peso !== null && s.peso < SOGLIE.peso70 ? ". Peso sotto i 70 kg: le dosi della scheda tecnica valgono per circa 70 kg e si riducono in proporzione" + st("Rytmonorm", "4.2") : "") + ".";
+      if (r.esito === "ok") o.rene = "ClCr " + nf(rn.crcl) + " mL/min" + (rn.egfr !== null ? " ed eGFR " + nf(rn.egfr, 0) : "") + ", non sotto 35" + pgs(T13) + ". Sopra 35 la fonte non dà aggiustamenti; la scheda tecnica chiede cautela e, con funzione renale alterata, una dose orale ridotta di almeno il 50%, senza dire da quale clearance" + st("Rytmonorm", "4.2, 4.4") + dv() + (r.senzaEgfr ? ". eGFR non indicato: la soglia di 35 è scritta con l'unità dell'eGFR" : "") + ".";
+      else if (r.esito === "manca") o.rene = "— serve la clearance: sotto 35 non si usa" + pgs(T13) + ".";
+      o.ctrl.push("<b>ECG</b> e pressione nella titolazione, ECG dopo l'inizio per escludere un pattern di Brugada; QRS allungato o QTc oltre +20%: ridurre o sospendere; livelli plasmatici con insufficienza renale o epatica; emocromo se compare febbre nei primi 2 mesi (agranulocitosi)" + st("Rytmonorm", "4.2, 4.4") + ".");
+      o.ctrl.push("<b>Interazioni</b>: aumenta digossina, metoprololo, propranololo e ciclosporina; potenzia warfarin; ritonavir controindicato" + st("Rytmonorm", "4.3, 4.5") + ".");
+    }
+    return chiudi(o);
+  }
+
+  function sota(s, rn, g) {
+    var o = nuovo("ok", { c:"IIb", l:"A", src:R18 }), fr = sotaFrazione(rn.crcl, rn.dialisi);
+    if (s.fe === "r") o.no.push("<b>HFrEF</b>: nelle Fig. 5–6, con FE ≤40%, c'è solo l'amiodarone" + pgs(F56) + "; la scheda tecnica non lo dà con FE &lt;40% senza aritmie ventricolari severe" + st("Sotalex", "4.4") + (s.cad ? ". La riga IIb A, alla lettera, ammette la coronaropatia senza dire con quale FE" + pgs(R18) + ": lettura prudente, escluso" : "") + ".");
+    else if (s.fe === "lr" && !s.cad) o.no.push("<b>HFmrEF senza coronaropatia</b>: la riga IIb A lo vuole con FE normale o coronaropatia" + pgs(R18) + "; le Fig. 5–6 lo mettono (IIb) anche nel gruppo dell'HFmrEF stabile" + pgs(F56) + ". Lettura prudente: la tabella, escluso.");
+    if (s.lqts) o.no.push("<b>QT lungo congenito</b>: fra i farmaci controindicati" + pgs(S6 + "; " + P70) + " e per la scheda tecnica" + st("Sotalex", "4.3") + ".");
+    if (s.qtc !== null && s.qtc > SOGLIE.qtcSota) o.no.push("<b>QTc " + s.qtc + " ms</b>: la scheda tecnica lo controindica nel QT lungo, congenito o acquisito, senza una soglia, e negli studi non si dava con un QTc di base oltre 450 ms" + st("Sotalex", "4.3, 4.4") + ". Lo strumento lo esclude sopra 450.");
+    else if (s.qtc === null) o.manca.push("serve il QTc: la riga IIb A chiede di sorvegliarlo" + pgs(R18));
+    if (s.k === "basso") o.no.push("<b>Potassio basso</b>: non si usa finché ipopotassiemia e ipomagnesiemia non sono corrette" + st("Sotalex", "4.4") + ".");
+    else if (!s.k) o.manca.push("serve il potassio: la riga IIb A chiede di sorvegliarlo" + pgs(R18));
+    else if (s.k === "alto") o.note.push("Potassio alto: la scheda tecnica parla solo di correggere ipopotassiemia e ipomagnesiemia" + st("Sotalex", "4.4") + "; da chiarire prima di iniziare.");
+    if (fr === 0) o.no.push(rn.dialisi ? "<b>Dialisi</b>: lo strumento la tratta come ClCr &lt;10, dove la scheda tecnica dice di non somministrarlo" + st("Sotalex", "4.2, 4.3") + "." : "<b>ClCr " + nf(rn.crcl) + " mL/min</b> (&lt;10): non somministrare" + st("Sotalex", "4.2, 4.3") + ".");
+    else if (fr === null) o.manca.push("serve la clearance: la dose dipende dal rene" + st("Sotalex", "4.2"));
+    if (avvisoAgg(rn, "sotalolo")) o.note.push(avvisoAgg(rn, "sotalolo"));
+    o.frazione = fr;
+    var a = DOSI.sota[0], b = DOSI.sota[1];
+    if (fr === 1 || fr === null || fr === 0) o.dose = "<b>" + a + "–" + b + " mg ×2/die</b>" + pgs(T13 + ", nota") + "; si parte da 80 mg/die in una o due somministrazioni e si sale ogni 2–3 giorni" + st("Sotalex", "4.2") + ".";
+    else o.dose = "<b>" + nf(a * fr) + "–" + nf(b * fr) + " mg ×2/die</b>: " + (fr === 0.5 ? "metà" : "un quarto") + " della dose della fonte, " + a + "–" + b + " mg ×2/die" + pgs(T13 + ", nota") + ", per ClCr " + (fr === 0.5 ? "30–60" : "10–30") + st("Sotalex", "4.2") + ". Lo schema riduce la dose, non allunga l'intervallo.";
+    if (fr === 1) o.rene = "ClCr " + nf(rn.crcl) + " mL/min (&gt;60): dose usuale" + st("Sotalex", "4.2") + "; la fonte chiede di sorvegliare il rene senza dare soglie" + pgs(R18) + ".";
+    else if (fr === 0.5) o.rene = "ClCr " + nf(rn.crcl) + " mL/min (30–60): <b>metà della dose</b>" + st("Sotalex", "4.2") + "; la fonte chiede di sorvegliare il rene senza dare soglie" + pgs(R18) + ".";
+    else if (fr === 0.25) o.rene = "ClCr " + nf(rn.crcl) + " mL/min (10–30): <b>un quarto della dose</b>" + st("Sotalex", "4.2") + (Math.abs(rn.crcl - SOGLIE.sotaMeta) < 0.05 ? ". A 30 esatti la scheda tecnica scrive sia «30–60» sia «10–30»: lo strumento prende un quarto, la dose più bassa" : "") + "; il generico chiede cautela sotto 30 per il rischio di proaritmia" + st("Sotalolo Mylan", "4.2") + ".";
+    else if (fr === null) o.rene = "— serve la clearance: &gt;60 dose usuale, 30–60 metà, 10–30 un quarto, &lt;10 non somministrare" + st("Sotalex", "4.2") + ".";
+    o.ctrl.push("<b>QT ed ECG</b> all'inizio e a ogni aumento; in terapia cautela oltre 500 ms, oltre 550 ridurre o sospendere; <b>potassio e magnesio</b> prima e durante; <b>funzione renale</b> prima e per adattare la dose; la proaritmia compare di solito entro 7 giorni dall'inizio o da un aumento" + st("Sotalex", "4.2, 4.4") + (s.sesso === "f" ? "; nelle donne il rischio di torsioni è maggiore" + st("Sotalex", "4.4") : "") + ".");
+    o.ctrl.push("Segnale di aumento della mortalità con sotalolo e amiodarone" + pgs(P58) + ". <b>Interazioni</b>: non con verapamil o diltiazem, né con antiaritmici di classe I o III; attenzione a diuretici e altri farmaci che abbassano potassio o magnesio" + st("Sotalex", "4.3, 4.5") + ".");
+    return chiudi(o);
+  }
+
+  function tutti(stato, testo) {
+    var ids = ["amio", "dron", "flec", "prop", "sota"], f = {}, i;
+    for (i = 0; i < ids.length; i++) { f[ids[i]] = nuovo(stato === "manca" ? "ok" : stato); if (stato === "manca") f[ids[i]].manca.push(testo); else f[ids[i]].no.push(testo); chiudi(f[ids[i]]); }
+    return f;
+  }
+
+  function valuta(s, rn) {
+    var g = gruppo(s), v = { g:g, gate:null, f:null };
+    if (!s.tipo) { v.gate = "manca"; v.f = tutti("manca", "serve il tipo di FA (passo 1)"); return v; }
+    if (s.tipo === "perm") {
+      v.gate = "perm"; v.f = tutti("np", "");
+      var ids = ["amio", "flec", "prop", "sota"], i;
+      for (i = 0; i < ids.length; i++) { v.f[ids[i]] = chiudi(nuovo("np")); v.f[ids[i]].note.push("FA permanente: per decisione condivisa il ritmo sinusale non si cerca più" + pgs(T5) + (ids[i] === "amio" || ids[i] === "sota" ? "; amiodarone e sotalolo rallentano anche la frequenza, ma di regola si usano per il ritmo" + pgs(P52) : "") + "."); }
+      v.f.dron = nuovo("ok"); v.f.dron.no.push("<b>FA permanente</b>: non si inizia per la frequenza, perché nella FA permanente aumenta scompenso, ictus e morte cardiovascolare" + pgs(P52) + "; la scheda tecnica lo controindica" + st("Multaq", "4.3") + "."); chiudi(v.f.dron);
+      return v;
+    }
+    if (!s.fe) { v.gate = "manca"; v.f = tutti("manca", "serve la frazione di eiezione (passo 2)"); return v; }
+    if (!s.valutati) { v.gate = "manca"; v.f = tutti("manca", "conferma le condizioni dei passi 2 e 3"); return v; }
+    if (s.cond && !s.pace) { v.gate = "manca"; v.f = tutti("manca", "disturbi di conduzione avanzati: serve sapere se c'è un pacing antibradicardico (passo 3)"); return v; }
+    if (s.cond && s.pace === "no") { v.gate = "cond"; v.f = tutti("no", "<b>Disturbi di conduzione avanzati senza pacing antibradicardico</b>: nessun antiaritmico " + corPill("III", "C") + pgs(R18) + "."); return v; }
+    v.f = { amio:amio(s, rn, g), dron:dron(s, rn, g), flec:ic("flec", s, rn, g), prop:ic("prop", s, rn, g), sota:sota(s, rn, g) };
+    return v;
+  }
+
+  function ablazione(s, v) {
+    var o = { righe:[], att:false };
+    if (!s.tipo) return o;
+    if (s.tipo === "perm") {
+      o.righe.push(["Nella FA permanente l'ablazione che resta è quella del <b>nodo AV con pacemaker</b>, nel paziente che non risponde o non è candidato a un controllo intensivo di frequenza e ritmo", "IIa", "B", R14]);
+      o.righe.push(["o con <b>CRT</b>, nel paziente molto sintomatico con almeno un ricovero per scompenso", "IIa", "B", R14]);
+      return o;
+    }
+    var amm = 0, manca = 0, k;
+    if (v.f) for (k in v.f) if (v.f.hasOwnProperty(k)) { if (v.f[k].stato === "ok") amm++; if (v.f[k].stato === "manca") manca++; }
+    o.nessuno = v.gate === null && amm === 0 && manca === 0;
+    o.att = o.nessuno || v.gate === "cond" || s.prefAbl;
+    o.righe.push(["Si decide insieme al paziente, pesando rischi della procedura, beneficio atteso e fattori di recidiva", "I", "C", R19]);
+    if (s.tipo === "par") o.righe.push(["<b>Prima linea</b> nella parossistica: un'opzione accanto all'antiaritmico, dentro la decisione condivisa", "I", "A", R19]);
+    else o.righe.push(["<b>Prima linea</b> nella persistente, in pazienti selezionati, dentro la decisione condivisa", "IIb", "C", R19]);
+    o.righe.push(["<b>Dopo un antiaritmico inefficace o non tollerato</b>, parossistica o persistente", "I", "A", R19]);
+    if (s.tipo === "pers") o.righe.push(["Endoscopica o ibrida nella persistente sintomatica refrattaria agli antiaritmici", "IIa", "A", R21]);
+    if (s.fe === "r") { o.righe.push(["<b>HFrEF</b> con tachicardiomiopatia probabile, per far recuperare la funzione", "I", "B", R19]); o.righe.push(["HFrEF selezionati, per ridurre i ricoveri per scompenso e prolungare la sopravvivenza", "IIa", "B", R19]); }
+    if (v.gate === "cond") o.righe.push(["Bradicardia o pause alla fine della FA: l'ablazione si considera per i sintomi e per evitare il pacemaker; l'altra strada è il pacing antibradicardico, e poi l'antiaritmico", "IIa", "C", R19]);
+    return o;
+  }
+
+  /* ═══ STATO E DISEGNO ═════════════════════════════════════════════════ */
+  function el(id) { return document.getElementById(id); }
+  function ckv(id) { var e = el(id); return !!(e && e.checked); }
+  function num(id) { var v = el(id).value; if (v === "") return null; var n = parseFloat(String(v).replace(",", ".")); return isNaN(n) ? null : n; }
+  function radio(n) { var e = document.querySelector('input[name="' + n + '"]:checked'); return e ? e.value : ""; }
+  function nota(g, t) { return '<div class="nota ' + (g || "") + '">' + t + "</div>"; }
+  function chip(k, t) { return '<span class="cat ' + k + '">' + t + "</span>"; }
+  function passo(t, att) { return '<div class="passo' + (att ? " att" : "") + '"><span class="ico">' + (att ? "→" : "·") + '</span><span class="tx">' + t + "</span></div>"; }
+
+  function S() {
+    var ids = ["hf", "cad", "lvh", "valv", "cond", "brugada", "lqts", "ipert", "valutati", "dialisi", "prefAbl"], s = {}, i;
+    for (i = 0; i < ids.length; i++) s[ids[i]] = ckv(ids[i]);
+    s.eta = num("eta"); s.peso = num("peso"); s.alt = num("alt"); s.creat = num("creat"); s.egfr = num("egfr"); s.qtc = num("qtc");
+    s.tipo = radio("tipo"); s.fe = radio("fe"); s.pace = s.cond ? radio("pace") : ""; s.k = radio("k"); s.sesso = radio("sesso"); s.ucr = radio("ucr") || "mg";
+    return s;
+  }
+
+  var NOMI = { amio:"Amiodarone", dron:"Dronedarone", flec:"Flecainide", prop:"Propafenone", sota:"Sotalolo" };
+  var CHIP = { ok:["k0", "ammesso"], ris:["k2", "con riserva"], no:["k4", "escluso"], np:["kx", "non proposto"], manca:["kx", "—"] };
+  var BREVE = { amio:DOSI.amio + " dopo il carico", dron:DOSI.dron, flec:DOSI.flec, prop:DOSI.prop, sota:"" };
+
+  function corDi(o) { return o.cor && (o.stato === "ok" || o.stato === "ris") ? " " + corPill(o.cor.c, o.cor.l) + (o.cor.l ? "" : ' <span class="pg">classe della figura, senza livello</span>') : ""; }
+  function doseBreve(k, o) {
+    if (k !== "sota") return BREVE[k];
+    if (o.frazione === 0.5 || o.frazione === 0.25) return nf(DOSI.sota[0] * o.frazione) + "–" + nf(DOSI.sota[1] * o.frazione) + " mg ×2/die";
+    return DOSI.sota[0] + "–" + DOSI.sota[1] + " mg ×2/die";
+  }
+
+  function disegnaFarmaco(k, o) {
+    var h = "", i, c = CHIP[o.stato];
+    h += '<div class="esito"><span class="nome">' + NOMI[k] + "</span>" + chip(c[0], c[1]) + corDi(o) + (o.cor && (o.stato === "ok" || o.stato === "ris") ? pgs(o.cor.src) : "") + "</div>";
+    for (i = 0; i < o.no.length; i++) h += passo("No. " + o.no[i]);
+    if (!o.no.length) for (i = 0; i < o.manca.length; i++) h += passo('<span class="muted">—</span> ' + o.manca[i] + ".");
+    if (o.stato !== "no") for (i = 0; i < o.ris.length; i++) h += nota("", o.ris[i]);
+    for (i = 0; i < o.note.length; i++) h += passo(o.note[i]);
+    if (o.stato === "ok" || o.stato === "ris" || o.stato === "manca") {
+      if (o.av && o.stato !== "manca") h += passo("<b>Con un betabloccante, diltiazem o verapamil</b>, contro la conduzione 1:1 se il ritmo diventa flutter " + corPill("IIa", "C") + pgs(R18) + ".");
+      if (o.dose) h += passo("<b>Dose a lungo termine</b>: " + o.dose, o.stato === "ok");
+      if (o.rene) h += passo("<b>Rene</b>: " + o.rene);
+      for (i = 0; i < o.ctrl.length; i++) h += passo(o.ctrl[i]);
+    }
+    if (o.stato === "no") for (i = 0; i < o.ris.length; i++) h += nota("spenta", o.ris[i]);
+    return h;
+  }
+
+  function disegna() {
+    var s = S(), rn = rene(s), i, k;
+    var chk = document.querySelectorAll(".chk");
+    for (i = 0; i < chk.length; i++) {
+      var inp = chk[i].querySelector("input"), on = !!(inp && inp.checked);
+      if (on && (" " + chk[i].className + " ").indexOf(" on ") < 0) chk[i].className += " on";
+      if (!on) chk[i].className = chk[i].className.replace(/(^|\s)on(\s|$)/g, " ").replace(/\s+$/, "");
+    }
+    el("rigaPace").className = s.cond ? "riga" : "riga hide";
+
+    /* rene */
+    var hr = "", cl = rn.cl, inc = incroci(rn);
+    if (cl.clcr !== null) {
+      hr += '<div class="esito"><span class="big">Clearance ' + nf(cl.clcr) + " mL/min</span>" + chip(cl.clcr < 30 ? "k4" : (cl.clcr <= 60 ? "k3" : "k1"), "Cockcroft-Gault, peso reale " + nf(s.peso) + " kg") + "</div>";
+      hr += '<div class="muted" style="font-size:12.5px;margin-bottom:4px">Creatinina ' + cl.mg.toFixed(2).replace(".", ",") + " mg/dL = " + nf(cl.umol, 0) + " µmol/L (1 mg/dL = 88,4 µmol/L)" + (cl.bmi !== null ? " · BMI " + nf(cl.bmi) : "") + "</div>";
+      if (cl.agg !== null) hr += '<div class="esito">' + chip("kx", "peso aggiustato " + nf(cl.pesoAgg, 0) + " kg: clearance " + nf(cl.agg)) + '<span class="muted">accanto, non decide (ideale di Devine ' + nf(cl.ibw, 0) + " kg + 0,4 × l'eccesso)</span></div>";
+      if (inc.length) { var tx = []; for (i = 0; i < inc.length; i++) tx.push(inc[i].f + " (soglia " + inc[i].s + ")"); hr += nota("", "<b>Ai lati di una soglia</b>: peso reale e peso aggiustato cadono ai lati opposti per " + tx.join("; ") + ". Decide il peso reale (decisione del medico, 03/10/2026); la scelta resta clinica."); }
+    } else hr += '<div class="esito">' + chip("kx", "clearance —") + '<span class="muted">mancano: ' + cl.manca.join(", ") + "</span></div>";
+    if (rn.dialisi) hr += '<div class="esito">' + chip("k4", "dialisi") + '<span class="muted">esclude flecainide, propafenone, dronedarone e sotalolo</span></div>';
+    if (rn.egfr !== null) hr += '<div class="esito">' + chip(rn.egfr < 30 ? "k4" : (rn.egfr < 35 ? "k3" : "k1"), "eGFR " + nf(rn.egfr, 0)) + '<span class="muted">conta per la soglia di 35 di flecainide e propafenone, scritta con l\'unità dell\'eGFR</span></div>';
+    el("outRene").innerHTML = hr;
+
+    /* farmaci */
+    var v = valuta(s, rn), ord = ["amio", "dron", "flec", "prop", "sota"], hs = "", amm = [], ris = [], manc = [];
+    if (v.gate === "manca") hs += '<div class="esito">' + chip("kx", "antiaritmici —") + '<span class="muted">' + v.f.amio.manca[0] + "</span></div>";
+    else if (v.gate === "perm") {
+      hs += '<div class="esito"><span class="big">FA permanente: nessun antiaritmico per il ritmo</span></div>';
+      hs += passo("Permanente vuol dire che, per decisione condivisa fra paziente e medico, non si programmano altri tentativi di ripristinare il ritmo sinusale" + pgs(T5) + ".");
+      hs += passo("Resta la <b>frequenza</b>: con FE &gt;40% betabloccante, diltiazem, verapamil o digossina; con FE ≤40% betabloccante e/o digossina " + corPill("I", "B") + pgs(R14) + " — sezione 8 del distillato.", true);
+      hs += passo("Se paziente e medico decidono di tentare di nuovo il ritmo, la FA non è più permanente: si riclassifica" + pgs(T5) + " e lo strumento si rilancia con il tipo nuovo.");
+    } else if (v.gate === "cond") {
+      hs += '<div class="esito"><span class="big">Nessun antiaritmico</span>' + corPill("III", "C") + pgs(R18) + "</div>";
+      hs += passo("Disturbi di conduzione avanzati senza pacing antibradicardico: prima il pacing, poi l'antiaritmico; oppure l'ablazione (passo 6).", true);
+    } else {
+      hs += passo("Prima del farmaco: cercare i fattori scatenanti reversibili e trattare le comorbidità" + pgs(P57) + ". Il farmaco lo sceglie la <b>sicurezza</b> più dell'efficacia, e il rischio proaritmico cresce con la cardiopatia strutturale" + pgs(P58) + ". <b>Mai due antiaritmici insieme</b>" + pgs(P58) + ".");
+      hs += passo("Il controllo del ritmo si decide insieme al paziente " + corPill("I", "") + pgs(F56) + ". Fra i farmaci di classe I A la fonte non dà un ordine.");
+      for (i = 0; i < ord.length; i++) {
+        k = ord[i];
+        var o = v.f[k], c = CHIP[o.stato];
+        if (o.stato === "ok") amm.push(NOMI[k].toLowerCase() + (k === "sota" && o.frazione < 1 ? (o.frazione === 0.5 ? " ½" : " ¼") : ""));
+        if (o.stato === "ris") ris.push(NOMI[k].toLowerCase());
+        if (o.stato === "manca") manc.push(NOMI[k].toLowerCase());
+        hs += '<div class="sint"><span class="n">' + NOMI[k] + "</span>" + chip(c[0], c[1]) + corDi(o) + (o.stato === "ok" || o.stato === "ris" ? '<span class="d">' + doseBreve(k, o) + "</span>" : "") + "</div>";
+      }
+      if (manc.length) hs += nota("info", "<b>Mancano dati</b> per " + manc.join(", ") + ": il motivo è nella scheda di ciascun farmaco, qui sotto.");
+      else if (!amm.length) hs += nota(ris.length ? "" : "stop", "<b>Nessun antiaritmico senza riserve</b>" + (ris.length ? ": restano, con riserva, " + ris.join(", ") : "") + ". Vedi l'ablazione al passo 6.");
+    }
+    el("outSint").innerHTML = hs;
+    for (i = 0; i < ord.length; i++) {
+      k = ord[i];
+      var dc = el("d_" + k);
+      dc.className = "card farm s-" + v.f[k].stato;
+      dc.innerHTML = disegnaFarmaco(k, v.f[k]);
+    }
+
+    /* ablazione */
+    var ab = ablazione(s, v), ha = "";
+    if (!ab.righe.length) ha += '<div class="esito">' + chip("kx", "ablazione —") + '<span class="muted">serve il tipo di FA (passo 1)</span></div>';
+    else {
+      if (ab.nessuno) ha += nota("info", "Nessun antiaritmico è ammesso senza riserve per questo paziente: l'ablazione è l'alternativa da discutere.");
+      else if (s.prefAbl && s.tipo !== "perm") ha += nota("info", "Il paziente preferisce l'ablazione: le classi qui sotto dicono dove la fonte la mette rispetto al farmaco.");
+      for (i = 0; i < ab.righe.length; i++) ha += passo(ab.righe[i][0] + " " + corPill(ab.righe[i][1], ab.righe[i][2]) + pgs(ab.righe[i][3]) + ".", ab.att && i < 3);
+      if (s.tipo !== "perm") ha += passo("L'anticoagulante intorno all'ablazione e dopo: sezione 10.6 del distillato" + pgs(R20) + ".");
+    }
+    el("outAbl").innerHTML = ha;
+
+    /* incoerenze e contrasti */
+    function inc2(tocca, x) { return nota(tocca ? "" : "spenta", (tocca ? "<b>Tocca questo caso.</b> " : "") + x); }
+    var vivo = v.gate === null, g = v.g, ir = icRene(rn);
+    var icNessuna = vivo && g === "nessuna" && !s.brugada;
+    el("outInc").innerHTML =
+      inc2(vivo && g === "media" && figMedia(s), "<b>Amiodarone fuori dall'HFrEF.</b> Nelle Fig. 5–6 è in classe I anche nel gruppo intermedio — HFmrEF stabile, coronaropatia, valvulopatia — accanto al dronedarone" + pgs(F56) + "; la Rec. Table 18 gli dà la riga I A soltanto nell'HFrEF" + pgs(R18) + ". Lo strumento lo mostra «con riserva»: lì prima il dronedarone, che è I A.") +
+      inc2(vivo && ((s.fe === "lr" && !s.cad) || (s.fe === "r" && s.cad)), "<b>Dove sta il sotalolo.</b> La Rec. Table 18 lo limita a FE normale o coronaropatia (IIb A)" + pgs(R18) + "; nelle Fig. 5–6 (IIb) sta anche sotto il gruppo che comprende l'HFmrEF stabile e la valvulopatia, e non compare nell'HFrEF" + pgs(F56) + ". Lettura prudente: la tabella; e niente sotalolo con FE ≤40%, anche con una coronaropatia.") +
+      inc2(v.gate === "perm", "<b>Dronedarone nella FA permanente.</b> La Rec. Table 18 non ne parla; il testo dice di non iniziarlo per la frequenza, perché nella FA permanente aumenta scompenso, ictus e morte cardiovascolare" + pgs(P52) + ", e la scheda tecnica lo controindica" + st("Multaq", "4.3") + ". Lo strumento lo esclude.") +
+      inc2(vivo && (s.fe === "lr" || s.hf) && g !== "hfref", "<b>Dronedarone e scompenso.</b> La fonte lo raccomanda anche con HFmrEF e HFpEF " + corPill("I", "A") + pgs(R18) + "; la scheda tecnica lo controindica con insufficienza cardiaca pregressa o in corso e con disfunzione sistolica, senza soglia di FE" + st("Multaq", "4.1, 4.3") + ". Lettura prudente: la scheda tecnica; lo strumento lo lascia «con riserva».") +
+      inc2(vivo && s.fe === "p" && (s.hf || s.valv) && !s.cad && !s.lvh, "<b>Flecainide e propafenone con HFpEF o valvulopatia.</b> La riga I A li esclude solo con funzione sistolica ridotta, ipertrofia severa o coronaropatia" + pgs(R18) + "; le Fig. 5–6 li mettono solo nella cardiopatia assente o minima" + pgs(F56) + ", la Tab. 13 li esclude nella cardiopatia strutturale severa" + pgs(T13) + ", le schede tecniche nello scompenso, nella valvulopatia o nella cardiopatia strutturale significativa" + st("Almarytm", "4.3") + st("Rytmonorm", "4.3") + ". Lettura prudente: esclusi.") +
+      inc2(icNessuna && (rn.noto || rn.egfr !== null), "<b>La soglia renale degli IC.</b> La Tab. 13 scrive «CrCl &lt;35 mL/min/1,73 m²»: una clearance con l'unità dell'eGFR, senza dire quale stima usare; e la cella delle controindicazioni è una sola per flecainide e propafenone" + pgs(T13) + ". Lo strumento li esclude se è sotto 35 la Cockcroft-Gault sul peso reale o l'eGFR.") +
+      inc2(icNessuna && ir.esito === "no", "<b>Flecainide e rene: fonte e schede tecniche.</b> La fonte non la usa sotto 35" + pgs(T13) + "; Almarytm la ammette con ClCr ≤35 mL/min/1,73 m², partendo da 100 mg/die con i livelli plasmatici" + st("Almarytm", "4.2") + ", e il rilascio prolungato scrive «≤20 ml/min/m²»" + st("Frequil", "4.2") + ". Lo strumento segue la fonte, la lettura più prudente.") +
+      inc2(icNessuna && rn.noto, "<b>Propafenone e rene.</b> La soglia di 35 viene dalla cella comune della Tab. 13" + pgs(T13) + "; la scheda tecnica non ha soglie: cautela e, con funzione renale alterata, dose orale ridotta di almeno il 50%" + st("Rytmonorm", "4.2, 4.4") + ". Lo strumento segue la fonte sotto 35; sopra, quando ridurre resta DA VERIFICARE.") +
+      inc2(vivo && s.ipert, "<b>Amiodarone e ipertiroidismo.</b> La Tab. 13 lo ammette «solo se non c'è altra scelta», per il rischio di tireotossicosi" + pgs(T13) + "; il supplementare lo dice controindicato" + pgs(S11) + ", e la scheda tecnica anche" + st("Cordarone", "4.3") + ". Lettura prudente: escluso.");
+
+    /* limiti */
+    var lim = [];
+    lim.push("Mantenimento del ritmo a lungo termine. La cardioversione e il farmaco per convertire, compreso il pill-in-the-pocket, sono un'altra decisione: sezione 9 del distillato.");
+    lim.push("Il gruppo «cardiopatia assente o minima» lo forma lo strumento: nessuna FE ≤49%, scompenso, coronaropatia, ipertrofia severa o valvulopatia. «Minima» è un giudizio clinico che la fonte non definisce" + pgs(F56) + ".");
+    lim.push("Le Fig. 5–6 parlano di HFmrEF «stabile» e non nominano né l'HFpEF né l'ipertrofia severa: lo strumento le mette con la cardiopatia, dove la Rec. Table 18 nomina il dronedarone (HFpEF) ed esclude gli IC (ipertrofia severa).");
+    lim.push("Clearance di Cockcroft-Gault sul peso reale, che decide; con BMI ≥30 accanto quella sul peso aggiustato (ideale di Devine + 0,4 × l'eccesso), con un avviso se le due cadono ai lati di una soglia del farmaco (decisione del medico, 03/10/2026). Le schede tecniche non dicono su quale peso.");
+    if (cl.clcr !== null && s.alt === null) lim.push("Altezza non indicata: il BMI non si calcola e manca il confronto col peso aggiustato; nell'obeso la clearance sul peso reale la sovrastima.");
+    lim.push("Il potassio si giudica sui limiti del laboratorio, e il QTc va misurato con la formula di Bazett per la soglia di Multaq: né la fonte né le schede tecniche danno un intervallo del potassio.");
+    lim.push("Le interazioni sono quelle principali delle schede tecniche: lo strumento non le controlla sui farmaci del paziente.");
+    lim.push("Fuori dallo strumento: gravidanza, cardiopatie congenite, sindromi aritmiche ereditarie diverse da Brugada e QT lungo (sezione 14 del distillato).");
+    el("limiti").innerHTML = "<li>" + lim.join("</li><li>") + "</li>";
+
+    function bar(id, kk, x) { var b = el(id); b.className = "cat " + kk; b.innerHTML = x; }
+    bar("barTipo", s.tipo ? "k1" : "kx", { par:"parossistica", pers:"persistente", perm:"permanente" }[s.tipo] || "—");
+    if (v.gate === "manca") bar("barAmm", "kx", "—");
+    else if (v.gate === "perm") bar("barAmm", "k4", "nessuno: FA permanente");
+    else if (v.gate === "cond") bar("barAmm", "k4", "nessuno: conduzione");
+    else if (!amm.length && manc.length) bar("barAmm", "kx", "— mancano dati");
+    else bar("barAmm", amm.length ? "k0" : (ris.length ? "k2" : "k4"), amm.length ? amm.join(" · ") : (ris.length ? "solo con riserva" : "nessuno"));
+    bar("barRene", rn.dialisi ? "k4" : (rn.crcl !== null ? (rn.crcl < 30 ? "k4" : (rn.crcl < 35 || rn.crcl <= 60 ? "k3" : "k1")) : "kx"), rn.dialisi ? "dialisi" : (rn.crcl !== null ? "ClCr " + nf(rn.crcl, 0) : "—"));
+  }
+
+  document.addEventListener("input", disegna);
+  document.addEventListener("change", disegna);
+  el("azzera").addEventListener("click", function () {
+    var ins = document.querySelectorAll("input"), i;
+    for (i = 0; i < ins.length; i++) {
+      if (ins[i].type === "checkbox" || ins[i].type === "radio") ins[i].checked = false;
+      else ins[i].value = "";
+    }
+    el("ucr_mg").checked = true;
+    disegna();
+    window.scrollTo(0, 0);
+  });
+
+  window.RITMO_MOTORE = { clearance:clearance, rene:rene, sotaFrazione:sotaFrazione, icRene:icRene, dronRene:dronRene, incroci:incroci, gruppo:gruppo, valuta:valuta, ablazione:ablazione };
+  disegna();
+})();
+</script>
+<script data-iphone="web">
+// Solo da un indirizzo https, cioe' dalla pagina pubblicata: aperto come file
+// il tool non cerca ne' manifest ne' service worker, che accanto al file non
+// ci sono. Un errore qui non deve fermare niente: e' un di piu'.
+(function(){
+if(location.protocol!=="https:") return;
+try{
+  var t=document.getElementsByTagName("head")[0];
+  var m=document.createElement("link"); m.rel="manifest"; m.href="manifest.webmanifest";
+  var i=document.createElement("link"); i.rel="apple-touch-icon"; i.href="icona-180.png";
+  t.appendChild(m); t.appendChild(i);
+  if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js")["catch"](function(){});
+}catch(e){}
+})();
+</script>
+<script data-iphone="fine">document.documentElement.className+=" motore-ok";</script>
+</body>
+</html>
