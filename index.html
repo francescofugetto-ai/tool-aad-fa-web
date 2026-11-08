@@ -308,6 +308,7 @@ html.js.motore-ko #nomotore{display:block}
   <label class="chk"><input type="checkbox" id="brugada"><span class="tx">Sindrome di Brugada</span></label>
   <label class="chk"><input type="checkbox" id="lqts"><span class="tx">Sindrome del QT lungo congenito</span></label>
   <label class="chk"><input type="checkbox" id="ipert"><span class="tx">Ipertiroidismo</span></label>
+  <label class="chk"><input type="checkbox" id="wpw"><span class="tx">Preeccitazione: sindrome di Wolff-Parkinson-White, FA preeccitata<small>sull'ECG di base o documentata: con la casella accesa lo strumento si ferma, perché nella FA preeccitata i farmaci sul nodo AV e l'amiodarone sono III B (ESC 2019 TSV, p. 690)</small></span></label>
   <label class="chk" style="margin-top:6px;border-top:1px solid var(--border-strong);padding-top:9px"><input type="checkbox" id="valutati"><span class="tx"><b>Ho valutato tutte le condizioni dei passi 2 e 3</b><small>quelle non segnate sono assenti: senza questa conferma lo strumento non ammette né esclude nessun farmaco</small></span></label>
 </div>
 
@@ -349,7 +350,7 @@ html.js.motore-ko #nomotore{display:block}
 <div class="card"><h3>Limiti per questo paziente</h3><ul class="lista" id="limiti"></ul></div>
 
 <div class="foot">
-  <strong>Fonte.</strong> Van Gelder IC, Rienstra M, Bunting KV, et al. 2024 ESC Guidelines for the management of atrial fibrillation developed in collaboration with EACTS. <em>Eur Heart J</em> 2024;45:3314–3414, doi:10.1093/eurheartj/ehae176, nella versione corretta (<em>Eur Heart J</em> 2025;46:4349), e il suo Supplementary data — definizioni del tipo di FA (Tab. 5, p. 3327), percorsi della parossistica e della persistente (Fig. 5, p. 3335; Fig. 6, p. 3336), dronedarone e frequenza (p. 3352), amiodarone nella Tab. 12 (p. 3353), dosi e controindicazioni degli antiaritmici (Tab. 13, p. 3357), antiaritmici a lungo termine (Rec. Table 18, p. 3358, e il testo delle pp. 3357–3358), ablazione transcatetere (Rec. Table 19, p. 3359), endoscopica e ibrida (Rec. Table 21, p. 3361), sindromi aritmiche ereditarie (p. 3370; Suppl., Tab. S6, p. 12), amiodarone e tiroide (Suppl., § 4.1, p. 11). <strong>Schede tecniche</strong>, lette il 03/10/2026: amiodarone (AIFA, testo reso disponibile l'08/09/2022), dronedarone (EMA, EPAR aggiornato il 31/07/2026), flecainide (AIFA, 12/11/2025), flecainide a rilascio prolungato (AIFA, 15/06/2025), propafenone (AIFA, 16/07/2022), sotalolo (AIFA, 03/02/2024; posologia renale uguale in un generico). Ogni numero mostrato porta la sua fonte.<br><br>
+  <strong>Fonte.</strong> Van Gelder IC, Rienstra M, Bunting KV, et al. 2024 ESC Guidelines for the management of atrial fibrillation developed in collaboration with EACTS. <em>Eur Heart J</em> 2024;45:3314–3414, doi:10.1093/eurheartj/ehae176, nella versione corretta (<em>Eur Heart J</em> 2025;46:4349), e il suo Supplementary data — definizioni del tipo di FA (Tab. 5, p. 3327), percorsi della parossistica e della persistente (Fig. 5, p. 3335; Fig. 6, p. 3336), dronedarone e frequenza (p. 3352), amiodarone nella Tab. 12 (p. 3353), dosi e controindicazioni degli antiaritmici (Tab. 13, p. 3357), antiaritmici a lungo termine (Rec. Table 18, p. 3358, e il testo delle pp. 3357–3358), ablazione transcatetere (Rec. Table 19, p. 3359), endoscopica e ibrida (Rec. Table 21, p. 3361), sindromi aritmiche ereditarie (p. 3370; Suppl., Tab. S6, p. 12), amiodarone e tiroide (Suppl., § 4.1, p. 11); per la preeccitazione la nota a della Tab. 12 (p. 3353) e la FA preeccitata (p. 3371). <strong>Preeccitazione</strong>: Brugada J, Katritsis DG, Arbelo E, et al. 2019 ESC Guidelines for the management of patients with supraventricular tachycardia. <em>Eur Heart J</em> 2020;41:655–720, doi:10.1093/eurheartj/ehz467 — FA preeccitata, farmaci da non dare e ablazione (pp. 690–692). <strong>Schede tecniche</strong>, lette il 03/10/2026: amiodarone (AIFA, testo reso disponibile l'08/09/2022), dronedarone (EMA, EPAR aggiornato il 31/07/2026), flecainide (AIFA, 12/11/2025), flecainide a rilascio prolungato (AIFA, 15/06/2025), propafenone (AIFA, 16/07/2022), sotalolo (AIFA, 03/02/2024; posologia renale uguale in un generico; la 5.1 e la 5.2 rilette il 07/11/2026 per la preeccitazione). Ogni numero mostrato porta la sua fonte.<br><br>
   Strumento personale di studio e consultazione: <strong>non sostituisce il giudizio clinico né la scheda tecnica del farmaco</strong>. Non salva i dati e non li invia in rete.
 </div>
 </div>
@@ -388,7 +389,35 @@ html.js.motore-ko #nomotore{display:block}
      Schede tecniche (03/10/2026): dronedarone ClCr <30 e QTc >=500 controindicati
        (4.2, 4.3); sotalolo ClCr >60 dose usuale, 30-60 1/2, 10-30 1/4, <10 no
        (4.2), QTc di base >450 non studiato (4.4); amiodarone nessun
-       aggiustamento renale (5.2). */
+       aggiustamento renale (5.2).
+     Preeccitazione (casella del passo 3, 07/11/2026, decisione del medico del
+       05/11/2026): 2019 ESC Guidelines for the management of patients with
+       supraventricular tachycardia — p. 690: i farmaci che modulano il nodo
+       AV (adenosina, verapamil, diltiazem, betabloccanti, digossina) vanno
+       evitati nella FA preeccitata; riga III B: digossina, betabloccanti,
+       diltiazem, verapamil e amiodarone non raccomandati e potenzialmente
+       dannosi nella FA preeccitata. p. 691: amiodarone e.v. III B nella FA
+       preeccitata in acuto. p. 692: amiodarone e.v. meno sicuro di quanto si
+       pensava (conduzione accresciuta sulla via, FV riportate); ablazione
+       terapia di scelta della FA preeccitata, nel testo, senza riga di
+       classe; p. 690: ablazione della via I B nell'AVRT sintomatica e
+       ricorrente; pp. 690-692: gli IC non sono vietati nella preeccitazione
+       (IIb B e.v. nella FA preeccitata, p. 691; agiscono sulla via, con la
+       cautela del flutter 1:1, p. 692). ESC 2024, Tab. 12, nota a, p. 3353: tutti i farmaci della
+       frequenza controindicati nella WPW, anche l'amiodarone e.v.; p. 3371:
+       amiodarone da evitare nella FA preeccitata per l'azione ritardata.
+       Scheda tecnica dell'amiodarone (4.1, 4.3): nessuna controindicazione,
+       fra le indicazioni le tachicardie reciprocanti della WPW.
+       Scheda tecnica del sotalolo (AIFA 03/02/2024, riletta il 07/11/2026):
+       5.1, betabloccante non selettivo, classe II e classe III; 5.2, sotto
+       «Proprieta' elettrofisiologiche», la classe II rallenta la conduzione
+       nel nodo AV e la classe III allunga anche il refrattario delle vie
+       accessorie (ricontrollo indipendente, 07/11/2026: quel paragrafo sta
+       nella 5.2, non nella 5.1); la ESC 2019 non lo nomina nella FA
+       preeccitata.
+       Ricontrollo R0 e decisione del medico del 07/11/2026 (punto 8): con la
+       casella, la nota sugli IC non vietati e quella sul sotalolo; Tool CV FA
+       ora ha la sua casella della pre-eccitazione. */
   var SOGLIE = { bmiAgg:30, ic:35, dron:30, sotaPiena:60, sotaMeta:30, sotaNo:10, qtcDron:500, qtcSota:450, qtcCv:500, umol:88.4, peso70:70, etaPolm:70, etaDron:75 };
   var DOSI = { amioCarico:"200 mg ×3/die per 4 settimane", amio:"200 mg/die", dron:"400 mg ×2/die", flec:"50–150 mg ×2/die", prop:"150–300 mg ×3/die", sota:[80, 160] };
 
@@ -396,7 +425,9 @@ html.js.motore-ko #nomotore{display:block}
       T12 = "ESC 2024, Tab. 12, p. 3353", P52 = "ESC 2024, p. 3352", P57 = "ESC 2024, p. 3357", P58 = "ESC 2024, p. 3358",
       R19 = "ESC 2024, Rec. Table 19, p. 3359", R21 = "ESC 2024, Rec. Table 21, p. 3361", R14 = "ESC 2024, Rec. Table 14, p. 3351",
       R17 = "ESC 2024, Rec. Table 17, p. 3356", T5 = "ESC 2024, Tab. 5, p. 3327", T11 = "ESC 2024, Tab. 11, p. 3345",
-      S11 = "ESC 2024 · Suppl., § 4.1, p. 11", S6 = "ESC 2024 · Suppl., Tab. S6, p. 12", P70 = "ESC 2024, p. 3370", R20 = "ESC 2024, Rec. Table 20, p. 3360";
+      S11 = "ESC 2024 · Suppl., § 4.1, p. 11", S6 = "ESC 2024 · Suppl., Tab. S6, p. 12", P70 = "ESC 2024, p. 3370", R20 = "ESC 2024, Rec. Table 20, p. 3360",
+      T12a = "ESC 2024, Tab. 12, nota a, p. 3353", P71 = "ESC 2024, p. 3371",
+      V690 = "ESC 2019 TSV, p. 690", V691 = "ESC 2019 TSV, p. 691", V692 = "ESC 2019 TSV, p. 692";
 
   /* ═══ FUNZIONI DI SCRITTURA (pure) ════════════════════════════════════ */
   function r1(x) { return Math.round(x * 10) / 10; }
@@ -605,8 +636,33 @@ html.js.motore-ko #nomotore{display:block}
     return f;
   }
 
+  // Preeccitazione: lo strumento non vale. La regola governa tutto il resto —
+  // tipo di FA, FA permanente, condizioni da confermare —, perché una casella
+  // accesa e' un dato positivo, e nella permanente lo strumento rimanderebbe
+  // ai farmaci della frequenza, che nella WPW sono controindicati (T12a).
+  function preecc() {
+    var f = {}, ids = ["dron", "flec", "prop", "sota"], i, ic;
+    f.amio = nuovo("ok");
+    f.amio.no.push("<b>Preeccitazione</b>: nella FA preeccitata l'amiodarone non è raccomandato e può nuocere " + corPill("III", "B") + pgs(V690) + "; per via e.v. non lo è nemmeno in acuto " + corPill("III", "B") + pgs(V691) + ", perché sono state riportate una conduzione accresciuta sulla via accessoria e la FV" + pgs(V692) + ". La ESC 2024 lo evita per l'azione ritardata" + pgs(P71) + ". La scheda tecnica non lo controindica, e fra le indicazioni ha le tachicardie reciprocanti della WPW" + st("amiodarone", "4.1, 4.3") + ": lo strumento segue le linee guida, la lettura più prudente.");
+    chiudi(f.amio);
+    for (i = 0; i < ids.length; i++) {
+      ic = ids[i] === "flec" || ids[i] === "prop";
+      f[ids[i]] = nuovo("np");
+      f[ids[i]].note.push("<b>Preeccitazione</b>: lo strumento non vale per questo paziente e non valuta la molecola (passo 5)" + (ic ? ". Non vale nemmeno la riga che affianca a flecainide e propafenone un betabloccante, il diltiazem o il verapamil" + pgs(R18) + ": nella FA preeccitata quei tre sono " + corPill("III", "B") + pgs(V690) : "") + ".");
+      // Ricontrollo R0, punto 3: gli IC non sono vietati, ma non diventano proposti.
+      if (ic) f[ids[i]].note.push("«Non proposto» non vuol dire vietato: la ESC 2019 non vieta gli IC nella preeccitazione. E.v., nella FA preeccitata in acuto, " + corPill("IIb", "B") + pgs(V691) + "; a lungo termine, nell'AVRT senza cardiopatia ischemica o strutturale e quando l'ablazione non è voluta o possibile, " + corPill("IIb", "B") + pgs(V690) + ". Nella FA preeccitata chiede la cautela di non trasformarla in un flutter con conduzione 1:1" + pgs(V692) + ". Una classe IIb si può considerare, non è una raccomandazione, e nessuna delle due righe parla del mantenimento nella FA preeccitata: la strada resta l'ablazione della via accessoria (passo 6) e la scheda 15.");
+      // Ricontrollo R0, punto 4: la scheda tecnica (5.1) lo classifica fra i betabloccanti;
+      // nodo AV e vie accessorie sono nelle «Proprieta' elettrofisiologiche», che nella
+      // scheda citata stanno nella 5.2 (ricontrollo indipendente, 07/11/2026).
+      if (ids[i] === "sota") f[ids[i]].note.push("Il sotalolo è anche un <b>betabloccante</b>: la scheda tecnica lo mette fra i betabloccanti non selettivi, con un'azione di classe II che rallenta la conduzione nel nodo AV, accanto a quella di classe III, che allunga anche il periodo refrattario delle vie accessorie" + st("sotalolo", "5.1, 5.2") + ". Nella FA preeccitata i betabloccanti sono " + corPill("III", "B") + pgs(V690) + "; la ESC 2019 non nomina il sotalolo nella FA preeccitata.");
+      chiudi(f[ids[i]]);
+    }
+    return f;
+  }
+
   function valuta(s, rn) {
     var g = gruppo(s), v = { g:g, gate:null, f:null };
+    if (s.wpw) { v.gate = "wpw"; v.f = preecc(); return v; }
     if (!s.tipo) { v.gate = "manca"; v.f = tutti("manca", "serve il tipo di FA (passo 1)"); return v; }
     if (s.tipo === "perm") {
       v.gate = "perm"; v.f = tutti("np", "");
@@ -625,6 +681,7 @@ html.js.motore-ko #nomotore{display:block}
 
   function ablazione(s, v) {
     var o = { righe:[], att:false };
+    if (v.gate === "wpw") { o.wpw = true; return o; }
     if (!s.tipo) return o;
     if (s.tipo === "perm") {
       o.righe.push(["Nella FA permanente l'ablazione che resta è quella del <b>nodo AV con pacemaker</b>, nel paziente che non risponde o non è candidato a un controllo intensivo di frequenza e ritmo", "IIa", "B", R14]);
@@ -655,7 +712,7 @@ html.js.motore-ko #nomotore{display:block}
   function passo(t, att) { return '<div class="passo' + (att ? " att" : "") + '"><span class="ico">' + (att ? "→" : "·") + '</span><span class="tx">' + t + "</span></div>"; }
 
   function S() {
-    var ids = ["hf", "cad", "lvh", "valv", "cond", "brugada", "lqts", "ipert", "valutati", "dialisi", "prefAbl"], s = {}, i;
+    var ids = ["hf", "cad", "lvh", "valv", "cond", "brugada", "lqts", "ipert", "wpw", "valutati", "dialisi", "prefAbl"], s = {}, i;
     for (i = 0; i < ids.length; i++) s[ids[i]] = ckv(ids[i]);
     s.eta = num("eta"); s.peso = num("peso"); s.alt = num("alt"); s.creat = num("creat"); s.egfr = num("egfr"); s.qtc = num("qtc");
     s.tipo = radio("tipo"); s.fe = radio("fe"); s.pace = s.cond ? radio("pace") : ""; s.k = radio("k"); s.sesso = radio("sesso"); s.ucr = radio("ucr") || "mg";
@@ -715,6 +772,12 @@ html.js.motore-ko #nomotore{display:block}
     /* farmaci */
     var v = valuta(s, rn), ord = ["amio", "dron", "flec", "prop", "sota"], hs = "", amm = [], ris = [], manc = [];
     if (v.gate === "manca") hs += '<div class="esito">' + chip("kx", "antiaritmici —") + '<span class="muted">' + v.f.amio.manca[0] + "</span></div>";
+    else if (v.gate === "wpw") {
+      hs += '<div class="esito"><span class="big">Preeccitazione: lo strumento non vale per questo paziente</span></div>';
+      hs += nota("stop", "<b>Niente farmaci sul nodo AV, nemmeno accanto a un antiaritmico.</b> Nella FA preeccitata digossina, betabloccanti, diltiazem, verapamil e amiodarone non sono raccomandati e possono nuocere " + corPill("III", "B") + pgs(V690) + "; i farmaci che agiscono sul nodo AV, adenosina compresa, vanno evitati, perché possono contribuire al rischio di FV" + pgs(V690) + ". La ESC 2024 controindica nella WPW tutti i farmaci della frequenza, anche l'amiodarone e.v." + pgs(T12a) + ". Qui non vale la riga che affianca a flecainide e propafenone un betabloccante, il diltiazem o il verapamil " + corPill("IIa", "C") + pgs(R18) + ".");
+      hs += passo("La terapia di scelta della FA preeccitata è l'<b>ablazione della via accessoria</b>" + pgs(V692) + ": lo dice il testo, senza una riga di classe; nell'AVRT sintomatica e ricorrente la riga c'è " + corPill("I", "B") + pgs(V690) + ".", true);
+      hs += passo("Dove andare: <b>scheda 15</b>, tachicardie sopraventricolari, sezione 14 (ESC 2019 TSV, pp. 690–692), e il <b>Tool FA preeccitata</b> del capitolo 15. L'episodio in atto: <b>Tool FC FA</b> ferma i farmaci della frequenza e dà la cardioversione (il suo passo 4); <b>Tool CV FA</b>, con la sua casella della pre-eccitazione, tiene la strada dell'anticoagulante e non propone un farmaco per convertire.");
+    }
     else if (v.gate === "perm") {
       hs += '<div class="esito"><span class="big">FA permanente: nessun antiaritmico per il ritmo</span></div>';
       hs += passo("Permanente vuol dire che, per decisione condivisa fra paziente e medico, non si programmano altri tentativi di ripristinare il ritmo sinusale" + pgs(T5) + ".");
@@ -747,7 +810,8 @@ html.js.motore-ko #nomotore{display:block}
 
     /* ablazione */
     var ab = ablazione(s, v), ha = "";
-    if (!ab.righe.length) ha += '<div class="esito">' + chip("kx", "ablazione —") + '<span class="muted">serve il tipo di FA (passo 1)</span></div>';
+    if (ab.wpw) ha += nota("info", "<b>Preeccitazione</b>: l'ablazione che conta qui è quella della <b>via accessoria</b>, terapia di scelta della FA preeccitata" + pgs(V692) + ", senza una riga di classe. Le righe della Rec. Table 19 sono sull'ablazione della FA" + pgs(R19) + ", e lo strumento qui non le applica: scheda 15, sezioni 13 e 14.");
+    else if (!ab.righe.length) ha += '<div class="esito">' + chip("kx", "ablazione —") + '<span class="muted">serve il tipo di FA (passo 1)</span></div>';
     else {
       if (ab.nessuno) ha += nota("info", "Nessun antiaritmico è ammesso senza riserve per questo paziente: l'ablazione è l'alternativa da discutere.");
       else if (s.prefAbl && s.tipo !== "perm") ha += nota("info", "Il paziente preferisce l'ablazione: le classi qui sotto dicono dove la fonte la mette rispetto al farmaco.");
@@ -781,11 +845,15 @@ html.js.motore-ko #nomotore{display:block}
     lim.push("Il potassio si giudica sui limiti del laboratorio, e il QTc va misurato con la formula di Bazett per la soglia del dronedarone: né la fonte né le schede tecniche danno un intervallo del potassio.");
     lim.push("Le interazioni sono quelle principali delle schede tecniche: lo strumento non le controlla sui farmaci del paziente.");
     lim.push("Fuori dallo strumento: gravidanza, cardiopatie congenite, sindromi aritmiche ereditarie diverse da Brugada e QT lungo (sezione 14 del distillato).");
+    lim.push("Fuori dallo strumento anche la preeccitazione (WPW, FA preeccitata): lo strumento presume che sia stata cercata sull'ECG di base, e con la casella del passo 3 si ferma, perché nella FA preeccitata i farmaci sul nodo AV e l'amiodarone sono III B (ESC 2019 TSV, p. 690). Dove andare: la scheda 15, quella delle tachicardie sopraventricolari, nella parte sulla FA preeccitata.");
     el("limiti").innerHTML = "<li>" + lim.join("</li><li>") + "</li>";
 
     function bar(id, kk, x) { var b = el(id); b.className = "cat " + kk; b.innerHTML = x; }
     bar("barTipo", s.tipo ? "k1" : "kx", { par:"parossistica", pers:"persistente", perm:"permanente" }[s.tipo] || "—");
     if (v.gate === "manca") bar("barAmm", "kx", "—");
+    // Non «nessuno»: lo strumento non valuta i farmaci, e la ESC 2019 non vieta
+    // gli IC nella preeccitazione (p. 692; IIb B pp. 690-691). Ricontrollo R0, 07/11/2026.
+    else if (v.gate === "wpw") bar("barAmm", "k4", "fuori dallo strumento: preeccitazione");
     else if (v.gate === "perm") bar("barAmm", "k4", "nessuno: FA permanente");
     else if (v.gate === "cond") bar("barAmm", "k4", "nessuno: conduzione");
     else if (!amm.length && manc.length) bar("barAmm", "kx", "— mancano dati");
